@@ -83,6 +83,7 @@ static void kf_bfly4(
     }while(--k);
 }
 
+/*
 static void kf_bfly4_m4(
     kiss_fft_cpx* Fout,
     const size_t fstride,
@@ -225,6 +226,7 @@ static void kf_bfly4_m4(
 
     // } while (--k);
 }
+*/
 
 /*
 static void kf_bfly4_m4_remapped(
