@@ -83,6 +83,498 @@ static void kf_bfly4(
     }while(--k);
 }
 
+static void kf_bfly4_m4(
+    kiss_fft_cpx* Fout,
+    const size_t fstride,
+    const kiss_fft_cfg st
+)
+{
+    kiss_fft_cpx* tw1, * tw2, * tw3;
+    kiss_fft_cpx scratch[6];
+    
+    const size_t m = 4;
+    size_t k = m;
+    const size_t m2 = 8; //  2 * 4;
+    const size_t m3 = 12; // 3 * 4;
+
+
+    tw3 = tw2 = tw1 = st->twiddles;
+
+    
+
+    // do {
+        // C_FIXDIV(*Fout, 4); C_FIXDIV(Fout[m], 4); C_FIXDIV(Fout[m2], 4); C_FIXDIV(Fout[m3], 4);
+
+        // 1
+        C_MUL(scratch[0], Fout[4], *tw1);
+        C_MUL(scratch[1], Fout[8], *tw2);
+        C_MUL(scratch[2], Fout[12], *tw3);
+
+        C_SUB(scratch[5], *Fout, scratch[1]);
+        C_ADDTO(Fout[0], scratch[1]);
+        C_ADD(scratch[3], scratch[0], scratch[2]);
+        C_SUB(scratch[4], scratch[0], scratch[2]);
+        C_SUB(Fout[8], *Fout, scratch[3]);
+        tw1 += fstride;
+        tw2 += fstride * 2;
+        tw3 += fstride * 3;
+        C_ADDTO(*Fout, scratch[3]);
+
+        if (st->inverse) {
+            Fout[4].r = scratch[5].r - scratch[4].i;
+            Fout[4].i = scratch[5].i + scratch[4].r;
+            Fout[12].r = scratch[5].r + scratch[4].i;
+            Fout[12].i = scratch[5].i - scratch[4].r;
+        }
+        else {
+            Fout[4].r = scratch[5].r + scratch[4].i;
+            Fout[4].i = scratch[5].i - scratch[4].r;
+            Fout[12].r = scratch[5].r - scratch[4].i;
+            Fout[12].i = scratch[5].i + scratch[4].r;
+        }
+        // ++Fout;
+
+        // 2
+        C_MUL(scratch[0], Fout[4+1], *tw1);
+        C_MUL(scratch[1], Fout[8 + 1], *tw2);
+        C_MUL(scratch[2], Fout[12 + 1], *tw3);
+
+        C_SUB(scratch[5], Fout[1], scratch[1]);
+        C_ADDTO(Fout[1], scratch[1]);
+        C_ADD(scratch[3], scratch[0], scratch[2]);
+        C_SUB(scratch[4], scratch[0], scratch[2]);
+        C_SUB(Fout[8+1], Fout[1], scratch[3]);
+        tw1 += fstride;
+        tw2 += fstride * 2;
+        tw3 += fstride * 3;
+        C_ADDTO(Fout[1], scratch[3]);
+
+        if (st->inverse) {
+            Fout[5].r = scratch[5].r - scratch[4].i;
+            Fout[5].i = scratch[5].i + scratch[4].r;
+            Fout[13].r = scratch[5].r + scratch[4].i;
+            Fout[13].i = scratch[5].i - scratch[4].r;
+        }
+        else {
+            Fout[5].r = scratch[5].r + scratch[4].i;
+            Fout[5].i = scratch[5].i - scratch[4].r;
+            Fout[13].r = scratch[5].r - scratch[4].i;
+            Fout[13].i = scratch[5].i + scratch[4].r;
+        }
+        // ++Fout;
+
+        // 3
+        C_MUL(scratch[0], Fout[4+2], *tw1);
+        C_MUL(scratch[1], Fout[8 + 2], *tw2);
+        C_MUL(scratch[2], Fout[12 + 2], *tw3);
+
+        C_SUB(scratch[5], Fout[2], scratch[1]);
+        C_ADDTO(Fout[2], scratch[1]);
+        C_ADD(scratch[3], scratch[0], scratch[2]);
+        C_SUB(scratch[4], scratch[0], scratch[2]);
+        C_SUB(Fout[8+2], Fout[2], scratch[3]);
+        tw1 += fstride;
+        tw2 += fstride * 2;
+        tw3 += fstride * 3;
+        C_ADDTO(Fout[2], scratch[3]);
+
+        if (st->inverse) {
+            Fout[4+2].r = scratch[5].r - scratch[4].i;
+            Fout[4 + 2].i = scratch[5].i + scratch[4].r;
+            Fout[12 + 2].r = scratch[5].r + scratch[4].i;
+            Fout[12 + 2].i = scratch[5].i - scratch[4].r;
+        }
+        else {
+            Fout[4 + 2].r = scratch[5].r + scratch[4].i;
+            Fout[4 + 2].i = scratch[5].i - scratch[4].r;
+            Fout[12 + 2].r = scratch[5].r - scratch[4].i;
+            Fout[12 + 2].i = scratch[5].i + scratch[4].r;
+        }
+        // ++Fout;
+
+        // 3
+        C_MUL(scratch[0], Fout[4+3], *tw1);
+        C_MUL(scratch[1], Fout[8 + 3], *tw2);
+        C_MUL(scratch[2], Fout[12 + 3], *tw3);
+
+        C_SUB(scratch[5], Fout[3], scratch[1]);
+        C_ADDTO(Fout[3], scratch[1]);
+        C_ADD(scratch[3], scratch[0], scratch[2]);
+        C_SUB(scratch[4], scratch[0], scratch[2]);
+        C_SUB(Fout[8 + 3], Fout[3], scratch[3]);
+        tw1 += fstride;
+        tw2 += fstride * 2;
+        tw3 += fstride * 3;
+        C_ADDTO(Fout[3], scratch[3]);
+
+        if (st->inverse) {
+            Fout[4+3].r = scratch[5].r - scratch[4].i;
+            Fout[4 + 3].i = scratch[5].i + scratch[4].r;
+            Fout[12 + 3].r = scratch[5].r + scratch[4].i;
+            Fout[12 + 3].i = scratch[5].i - scratch[4].r;
+        }
+        else {
+            Fout[4 + 3].r = scratch[5].r + scratch[4].i;
+            Fout[4 + 3].i = scratch[5].i - scratch[4].r;
+            Fout[12 + 3].r = scratch[5].r - scratch[4].i;
+            Fout[12 + 3].i = scratch[5].i + scratch[4].r;
+        }
+        // ++Fout;
+
+
+
+    // } while (--k);
+}
+
+/*
+static void kf_bfly4_m4_remapped(
+    kiss_fft_cpx* fast_Fout,
+    const size_t fstride,
+    const kiss_fft_cfg st
+)
+{
+    kiss_fft_cpx* tw1, * tw2, * tw3;
+    kiss_fft_cpx scratch[6];
+
+    const size_t m = 4;
+    size_t k = m;
+    const size_t m2 = 8; //  2 * 4;
+    const size_t m3 = 12; // 3 * 4;
+
+
+    tw3 = tw2 = tw1 = st->twiddles;
+
+
+
+    // do {
+        // C_FIXDIV(*Fout, 4); C_FIXDIV(Fout[m], 4); C_FIXDIV(Fout[m2], 4); C_FIXDIV(Fout[m3], 4);
+
+        // 1
+    C_MUL(scratch[0], fast_Fout[0], *tw1);
+    C_MUL(scratch[1], fast_Fout[1], *tw2);
+    C_MUL(scratch[2], fast_Fout[2], *tw3);
+
+    C_SUB(scratch[5], fast_Fout[3], scratch[1]);
+    C_ADDTO(fast_Fout[3], scratch[1]);
+    C_ADD(scratch[3], scratch[0], scratch[2]);
+    C_SUB(scratch[4], scratch[0], scratch[2]);
+    C_SUB(fast_Fout[1], fast_Fout[3], scratch[3]);
+    tw1 += fstride;
+    tw2 += fstride * 2;
+    tw3 += fstride * 3;
+    C_ADDTO(fast_Fout[3], scratch[3]);
+
+    if (st->inverse) {
+        fast_Fout[0].r = scratch[5].r - scratch[4].i;
+        fast_Fout[0].i = scratch[5].i + scratch[4].r;
+        fast_Fout[2].r = scratch[5].r + scratch[4].i;
+        fast_Fout[2].i = scratch[5].i - scratch[4].r;
+    }
+    else {
+        fast_Fout[0].r = scratch[5].r + scratch[4].i;
+        fast_Fout[0].i = scratch[5].i - scratch[4].r;
+        fast_Fout[2].r = scratch[5].r - scratch[4].i;
+        fast_Fout[2].i = scratch[5].i + scratch[4].r;
+    }
+    // ++Fout;
+
+    // 2
+    C_MUL(scratch[0], fast_Fout[4], *tw1);
+    C_MUL(scratch[1], fast_Fout[5], *tw2);
+    C_MUL(scratch[2], fast_Fout[6], *tw3);
+
+    C_SUB(scratch[5], fast_Fout[7], scratch[1]);
+    C_ADDTO(fast_Fout[7], scratch[1]);
+    C_ADD(scratch[3], scratch[0], scratch[2]);
+    C_SUB(scratch[4], scratch[0], scratch[2]);
+    C_SUB(fast_Fout[5], fast_Fout[7], scratch[3]);
+    tw1 += fstride;
+    tw2 += fstride * 2;
+    tw3 += fstride * 3;
+    C_ADDTO(fast_Fout[7], scratch[3]);
+
+    if (st->inverse) {
+        fast_Fout[4].r = scratch[5].r - scratch[4].i;
+        fast_Fout[4].i = scratch[5].i + scratch[4].r;
+        fast_Fout[6].r = scratch[5].r + scratch[4].i;
+        fast_Fout[6].i = scratch[5].i - scratch[4].r;
+    }
+    else {
+        fast_Fout[4].r = scratch[5].r + scratch[4].i;
+        fast_Fout[4].i = scratch[5].i - scratch[4].r;
+        fast_Fout[6].r = scratch[5].r - scratch[4].i;
+        fast_Fout[6].i = scratch[5].i + scratch[4].r;
+    }
+    // ++Fout;
+
+    // 3
+    C_MUL(scratch[0], fast_Fout[8], *tw1);
+    C_MUL(scratch[1], fast_Fout[9], *tw2);
+    C_MUL(scratch[2], fast_Fout[10], *tw3);
+
+    C_SUB(scratch[5], fast_Fout[11], scratch[1]);
+    C_ADDTO(fast_Fout[11], scratch[1]);
+    C_ADD(scratch[3], scratch[0], scratch[2]);
+    C_SUB(scratch[4], scratch[0], scratch[2]);
+    C_SUB(fast_Fout[9], fast_Fout[11], scratch[3]);
+    tw1 += fstride;
+    tw2 += fstride * 2;
+    tw3 += fstride * 3;
+    C_ADDTO(fast_Fout[11], scratch[3]);
+
+    if (st->inverse) {
+        fast_Fout[8].r = scratch[5].r - scratch[4].i;
+        fast_Fout[8].i = scratch[5].i + scratch[4].r;
+        fast_Fout[10].r = scratch[5].r + scratch[4].i;
+        fast_Fout[10].i = scratch[5].i - scratch[4].r;
+    }
+    else {
+        fast_Fout[8].r = scratch[5].r + scratch[4].i;
+        fast_Fout[8].i = scratch[5].i - scratch[4].r;
+        fast_Fout[10].r = scratch[5].r - scratch[4].i;
+        fast_Fout[10].i = scratch[5].i + scratch[4].r;
+    }
+    // ++Fout;
+
+    // 3
+    C_MUL(scratch[0], fast_Fout[12], *tw1);
+    C_MUL(scratch[1], fast_Fout[13], *tw2);
+    C_MUL(scratch[2], fast_Fout[14], *tw3);
+
+    C_SUB(scratch[5], fast_Fout[15], scratch[1]);
+    C_ADDTO(fast_Fout[15], scratch[1]);
+    C_ADD(scratch[3], scratch[0], scratch[2]);
+    C_SUB(scratch[4], scratch[0], scratch[2]);
+    C_SUB(fast_Fout[13], fast_Fout[15], scratch[3]);
+    tw1 += fstride;
+    tw2 += fstride * 2;
+    tw3 += fstride * 3;
+    C_ADDTO(fast_Fout[15], scratch[3]);
+
+    if (st->inverse) {
+        fast_Fout[12].r = scratch[5].r - scratch[4].i;
+        fast_Fout[12].i = scratch[5].i + scratch[4].r;
+        fast_Fout[14].r = scratch[5].r + scratch[4].i;
+        fast_Fout[14].i = scratch[5].i - scratch[4].r;
+    }
+    else {
+        fast_Fout[12].r = scratch[5].r + scratch[4].i;
+        fast_Fout[12].i = scratch[5].i - scratch[4].r;
+        fast_Fout[14].r = scratch[5].r - scratch[4].i;
+        fast_Fout[14].i = scratch[5].i + scratch[4].r;
+    }
+    // ++Fout;
+
+
+
+// } while (--k);
+}
+
+static void f_map_Fout_to_fast_Fout(const kiss_fft_cpx* Fin, kiss_fft_cpx* fast_Fout)
+{
+    fast_Fout[0].r = Fin[4].r;
+    fast_Fout[0].i = Fin[4].i;
+    fast_Fout[1].r = Fin[8].r;
+    fast_Fout[1].i = Fin[8].i;
+    fast_Fout[2].r = Fin[12].r;
+    fast_Fout[2].i = Fin[12].i;
+    fast_Fout[3].r = Fin[0].r;
+    fast_Fout[3].i = Fin[0].i;
+
+    fast_Fout[4].r = Fin[5].r;
+    fast_Fout[4].i = Fin[5].i;
+    fast_Fout[5].r = Fin[9].r;
+    fast_Fout[5].i = Fin[9].i;
+    fast_Fout[6].r = Fin[13].r;
+    fast_Fout[6].i = Fin[13].i;
+    fast_Fout[7].r = Fin[1].r;
+    fast_Fout[7].i = Fin[1].i;
+
+    fast_Fout[8].r = Fin[6].r;
+    fast_Fout[8].i = Fin[6].i;
+    fast_Fout[9].r = Fin[10].r;
+    fast_Fout[9].i = Fin[10].i;
+    fast_Fout[10].r = Fin[14].r;
+    fast_Fout[10].i = Fin[14].i;
+    fast_Fout[11].r = Fin[2].r;
+    fast_Fout[11].i = Fin[2].i;
+
+    fast_Fout[12].r = Fin[7].r;
+    fast_Fout[12].i = Fin[7].i;
+    fast_Fout[13].r = Fin[11].r;
+    fast_Fout[13].i = Fin[11].i;
+    fast_Fout[14].r = Fin[15].r;
+    fast_Fout[14].i = Fin[15].i;
+    fast_Fout[15].r = Fin[3].r;
+    fast_Fout[15].i = Fin[3].i;
+
+}
+
+static void f_map_fast_Fout_to_Fout(const kiss_fft_cpx* fast_Fout, kiss_fft_cpx* Fout)
+{
+    Fout[4].r = fast_Fout[0].r; // = Fin[4].r;
+    Fout[4].i = fast_Fout[0].i; // = Fin[4].i;
+    Fout[8].r = fast_Fout[1].r; // = Fin[8].r;
+    Fout[8].i = fast_Fout[1].i; // = Fin[8].i;
+    Fout[12].r = fast_Fout[2].r; // = Fin[12].r;
+    Fout[12].i = fast_Fout[2].i; // = Fin[12].i;
+    Fout[0].r = fast_Fout[3].r; // = Fin[0].r;
+    Fout[0].i = fast_Fout[3].i; // = Fin[0].i;
+
+    Fout[5].r = fast_Fout[4].r; //  = Fin[5].r;
+    Fout[5].i = fast_Fout[4].i; //  = Fin[5].i;
+    Fout[9].r = fast_Fout[5].r; //  = Fin[9].r;
+    Fout[9].i = fast_Fout[5].i; //  = Fin[9].i;
+    Fout[13].r = fast_Fout[6].r; //  = Fin[13].r;
+    Fout[13].i = fast_Fout[6].i; //  = Fin[13].i;
+    Fout[1].r = fast_Fout[7].r; //  = Fin[1].r;
+    Fout[1].i = fast_Fout[7].i; //  = Fin[1].i;
+
+    Fout[6].r = fast_Fout[8].r; //   = Fin[6].r;
+    Fout[6].i = fast_Fout[8].i; //   = Fin[6].i;
+    Fout[10].r = fast_Fout[9].r; //   = Fin[10].r;
+    Fout[10].i = fast_Fout[9].i; //   = Fin[10].i;
+    Fout[14].r = fast_Fout[10].r; //   = Fin[14].r;
+    Fout[14].i = fast_Fout[10].i; //   = Fin[14].i;
+    Fout[2].r = fast_Fout[11].r; //  = Fin[2].r;
+    Fout[2].i = fast_Fout[11].i; //  = Fin[2].i;
+
+    Fout[7].r = fast_Fout[12].r; // = Fin[7].r;
+    Fout[7].i = fast_Fout[12].i; // = Fin[7].i;
+    Fout[11].r = fast_Fout[13].r; // = Fin[11].r;
+    Fout[11].i = fast_Fout[13].i; // = Fin[11].i;
+    Fout[15].r = fast_Fout[14].r; //= Fin[15].r;
+    Fout[15].i = fast_Fout[14].i; // = Fin[15].i;
+    Fout[3].r = fast_Fout[15].r; //= Fin[3].r;
+    Fout[3].i = fast_Fout[15].i; // = Fin[3].i;
+
+}
+
+*/
+
+static void kf_bfly4_m4_multiple_scratches(
+    kiss_fft_cpx* Fout,
+    const size_t fstride,
+    const kiss_fft_cfg st
+)
+{
+    kiss_fft_cpx* tw1, * tw2, * tw3;
+    kiss_fft_cpx scratch1[6];
+    kiss_fft_cpx scratch2[6];
+    kiss_fft_cpx scratch3[6];
+    kiss_fft_cpx scratch4[6];
+
+    const size_t m = 4;
+    size_t k = m;
+    const size_t m2 = 8; //  2 * 4;
+    const size_t m3 = 12; // 3 * 4;
+
+
+    tw3 = tw2 = tw1 = st->twiddles;
+
+
+
+    // do {
+        // C_FIXDIV(*Fout, 4); C_FIXDIV(Fout[m], 4); C_FIXDIV(Fout[m2], 4); C_FIXDIV(Fout[m3], 4);
+
+    // 1
+    C_MUL(scratch1[0], Fout[4],      *(tw1+0));
+    C_MUL(scratch2[0], Fout[4 + 1],  *(tw1 + fstride));
+    C_MUL(scratch3[0], Fout[4 + 2],  *(tw1 + 2*fstride));
+    C_MUL(scratch4[0], Fout[4 + 3],  *(tw1 + 3 * fstride));
+
+    C_MUL(scratch1[1], Fout[8],      *(tw2 + 0));
+    C_MUL(scratch2[1], Fout[8 + 1],  *(tw2 + 2*fstride));
+    C_MUL(scratch3[1], Fout[8 + 2],  *(tw2 + 2* 2 * fstride));
+    C_MUL(scratch4[1], Fout[8 + 3],  *(tw2 + 3 * 2 * fstride));
+
+    C_MUL(scratch1[2], Fout[12],     *(tw3 + 0));
+    C_MUL(scratch2[2], Fout[12 + 1], *(tw3 + 3*fstride));
+    C_MUL(scratch3[2], Fout[12 + 2], *(tw3 + 2* 3 * fstride));
+    C_MUL(scratch4[2], Fout[12 + 3], *(tw3 + 3 * 3 * fstride));
+
+    C_SUB(scratch1[5], *Fout,   scratch1[1]);
+    C_SUB(scratch2[5], Fout[1], scratch2[1]);
+    C_SUB(scratch3[5], Fout[2], scratch3[1]);
+    C_SUB(scratch4[5], Fout[3], scratch4[1]);
+
+    C_ADDTO(Fout[0], scratch1[1]);
+    C_ADDTO(Fout[1], scratch2[1]);
+    C_ADDTO(Fout[2], scratch3[1]);
+    C_ADDTO(Fout[3], scratch4[1]);
+
+    C_ADD(scratch1[3], scratch1[0], scratch1[2]);
+    C_ADD(scratch2[3], scratch2[0], scratch2[2]);
+    C_ADD(scratch3[3], scratch3[0], scratch3[2]);
+    C_ADD(scratch4[3], scratch4[0], scratch4[2]);
+
+    C_SUB(scratch1[4], scratch1[0], scratch1[2]);
+    C_SUB(scratch2[4], scratch2[0], scratch2[2]);
+    C_SUB(scratch3[4], scratch3[0], scratch3[2]);
+    C_SUB(scratch4[4], scratch4[0], scratch4[2]);
+
+    C_SUB(Fout[8],     *Fout,   scratch1[3]);
+    C_SUB(Fout[8 + 1], Fout[1], scratch2[3]);
+    C_SUB(Fout[8 + 2], Fout[2], scratch3[3]);
+    C_SUB(Fout[8 + 3], Fout[3], scratch4[3]);
+
+    C_ADDTO(*Fout,   scratch1[3]);
+    C_ADDTO(Fout[1], scratch2[3]);
+    C_ADDTO(Fout[2], scratch3[3]);
+    C_ADDTO(Fout[3], scratch4[3]);
+
+    if (st->inverse) {
+        Fout[4].r = scratch1[5].r - scratch1[4].i;
+        Fout[4].i = scratch1[5].i + scratch1[4].r;
+        Fout[12].r = scratch1[5].r + scratch1[4].i;
+        Fout[12].i = scratch1[5].i - scratch1[4].r;
+
+        Fout[5].r = scratch2[5].r - scratch2[4].i;
+        Fout[5].i = scratch2[5].i + scratch2[4].r;
+        Fout[13].r = scratch2[5].r + scratch2[4].i;
+        Fout[13].i = scratch2[5].i - scratch2[4].r;
+
+        Fout[4 + 2].r = scratch3[5].r - scratch3[4].i;
+        Fout[4 + 2].i = scratch3[5].i + scratch3[4].r;
+        Fout[12 + 2].r = scratch3[5].r + scratch3[4].i;
+        Fout[12 + 2].i = scratch3[5].i - scratch3[4].r;
+
+        Fout[4 + 3].r = scratch4[5].r - scratch4[4].i;
+        Fout[4 + 3].i = scratch4[5].i + scratch4[4].r;
+        Fout[12 + 3].r = scratch4[5].r + scratch4[4].i;
+        Fout[12 + 3].i = scratch4[5].i - scratch4[4].r;
+
+    }
+    else {
+        Fout[4].r = scratch1[5].r + scratch1[4].i;
+        Fout[4].i = scratch1[5].i - scratch1[4].r;
+        Fout[12].r = scratch1[5].r - scratch1[4].i;
+        Fout[12].i = scratch1[5].i + scratch1[4].r;
+
+
+        Fout[4 + 1].r = scratch2[5].r + scratch2[4].i;
+        Fout[4 + 1].i = scratch2[5].i - scratch2[4].r;
+        Fout[12 + 1].r = scratch2[5].r - scratch2[4].i;
+        Fout[12 + 1].i = scratch2[5].i + scratch2[4].r;
+
+        Fout[4 + 2].r = scratch3[5].r + scratch3[4].i;
+        Fout[4 + 2].i = scratch3[5].i - scratch3[4].r;
+        Fout[12 + 2].r = scratch3[5].r - scratch3[4].i;
+        Fout[12 + 2].i = scratch3[5].i + scratch3[4].r;
+
+        Fout[4 + 3].r = scratch4[5].r + scratch4[4].i;
+        Fout[4 + 3].i = scratch4[5].i - scratch4[4].r;
+        Fout[12 + 3].r = scratch4[5].r - scratch4[4].i;
+        Fout[12 + 3].i = scratch4[5].i + scratch4[4].r;
+    }
+
+
+}
+
+
+
+
+
 static void kf_bfly3(
          kiss_fft_cpx * Fout,
          const size_t fstride,
@@ -232,6 +724,7 @@ static void kf_bfly_generic(
     KISS_FFT_TMP_FREE(scratch);
 }
 
+
 static
 void kf_work(
         kiss_fft_cpx * Fout,
@@ -293,7 +786,24 @@ void kf_work(
     switch (p) {
         case 2: kf_bfly2(Fout,fstride,st,m); break;
         case 3: kf_bfly3(Fout,fstride,st,m); break;
-        case 4: kf_bfly4(Fout,fstride,st,m); break;
+        case 4: 
+            if (m == 4) 
+            {
+                
+                
+                kf_bfly4_m4_multiple_scratches(Fout, fstride, st);
+
+                // kiss_fft_cpx* fast_Fout = (kiss_fft_cpx*)malloc(16 * sizeof(kiss_fft_cpx));
+                // f_map_Fout_to_fast_Fout(Fout, fast_Fout);
+                // kf_bfly4_m4_remapped(fast_Fout, fstride, st);
+                // f_map_fast_Fout_to_Fout(fast_Fout, Fout);
+               
+            }
+            else
+            {
+                kf_bfly4(Fout, fstride, st, m);
+            }
+            break;
         case 5: kf_bfly5(Fout,fstride,st,m); break;
         default: kf_bfly_generic(Fout,fstride,st,m,p); break;
     }
