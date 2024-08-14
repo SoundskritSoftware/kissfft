@@ -83,6 +83,7 @@ static void kf_bfly4(
     }while(--k);
 }
 
+/*
 static void kf_bfly4_m4(
     kiss_fft_cpx* Fout,
     const size_t fstride,
@@ -226,7 +227,7 @@ static void kf_bfly4_m4(
     // } while (--k);
 }
 
-/*
+
 static void kf_bfly4_m4_remapped(
     kiss_fft_cpx* fast_Fout,
     const size_t fstride,
@@ -461,6 +462,9 @@ static void kf_bfly4_m4_multiple_scratches(
     kiss_fft_cpx* tw1, * tw2, * tw3;
 
     kiss_fft_cpx scratch_interleaved[6*4];
+    kiss_fft_cpx* p_scratch_interleaved_a;
+    kiss_fft_cpx* p_scratch_interleaved_b;
+    kiss_fft_cpx* p_Fout;
 
     const size_t m = 4;
     size_t k = m;
@@ -519,43 +523,111 @@ static void kf_bfly4_m4_multiple_scratches(
 
     if (st->inverse) {
 
-        Fout[4].r   = scratch_interleaved[5*4].r    - scratch_interleaved[4*4].i;
-        Fout[4].i   = scratch_interleaved[5*4].i    + scratch_interleaved[4*4].r;
-        Fout[4+1].r = scratch_interleaved[5*4 +1].r - scratch_interleaved[4*4 +1].i;
-        Fout[4+1].i = scratch_interleaved[5*4 +1].i + scratch_interleaved[4*4 +1].r;
-        Fout[4+2].r = scratch_interleaved[5*4 +2].r - scratch_interleaved[4*4 +2].i;
-        Fout[4+2].i = scratch_interleaved[5*4 +2].i + scratch_interleaved[4*4 +2].r;
-        Fout[4+3].r = scratch_interleaved[5*4 +3].r - scratch_interleaved[4*4 +3].i;
-        Fout[4+3].i = scratch_interleaved[5*4 +3].i + scratch_interleaved[4*4 +3].r;
+#if 1
+        p_scratch_interleaved_a = &scratch_interleaved[5 * 4];
+        p_scratch_interleaved_b = &scratch_interleaved[4 * 4];
+        p_Fout                = &Fout[4];
 
-        Fout[12].r   = scratch_interleaved[5*4].r    + scratch_interleaved[4*4].i;
-        Fout[12].i   = scratch_interleaved[5*4].i    - scratch_interleaved[4*4].r;
-        Fout[12+1].r = scratch_interleaved[5*4 +1].r + scratch_interleaved[4*4 +1].i;
-        Fout[12+1].i = scratch_interleaved[5*4 +1].i - scratch_interleaved[4*4 +1].r;
-        Fout[12+2].r = scratch_interleaved[5*4 +2].r + scratch_interleaved[4*4 +2].i;
-        Fout[12+2].i = scratch_interleaved[5*4 +2].i - scratch_interleaved[4*4 +2].r;
-        Fout[12+3].r = scratch_interleaved[5*4 +3].r + scratch_interleaved[4*4 +3].i;
-        Fout[12+3].i = scratch_interleaved[5*4 +3].i - scratch_interleaved[4*4 +3].r;
+        (*p_Fout).r   = (*p_scratch_interleaved_a).r - (*p_scratch_interleaved_b).i; // ->
+        (*p_Fout).i   = (*p_scratch_interleaved_a).i + (*p_scratch_interleaved_b).r;
+        p_scratch_interleaved_a++; p_scratch_interleaved_b++; p_Fout++;
+
+        (*p_Fout).r = (*p_scratch_interleaved_a).r - (*p_scratch_interleaved_b).i;
+        (*p_Fout).i = (*p_scratch_interleaved_a).i + (*p_scratch_interleaved_b).r;
+        p_scratch_interleaved_a++; p_scratch_interleaved_b++; p_Fout++;
+
+        (*p_Fout).r = (*p_scratch_interleaved_a).r - (*p_scratch_interleaved_b).i;
+        (*p_Fout).i = (*p_scratch_interleaved_a).i + (*p_scratch_interleaved_b).r;
+        p_scratch_interleaved_a++; p_scratch_interleaved_b++; p_Fout++;
+
+        (*p_Fout).r = (*p_scratch_interleaved_a).r - (*p_scratch_interleaved_b).i;
+        (*p_Fout).i = (*p_scratch_interleaved_a).i + (*p_scratch_interleaved_b).r;
+
+
+
+        p_scratch_interleaved_a = &scratch_interleaved[5 * 4];
+        p_scratch_interleaved_b = &scratch_interleaved[4 * 4];
+        p_Fout = &Fout[12];
+
+        (*p_Fout).r = (*p_scratch_interleaved_a).r + (*p_scratch_interleaved_b).i;
+        (*p_Fout).i = (*p_scratch_interleaved_a).i - (*p_scratch_interleaved_b).r;
+        p_scratch_interleaved_a++;  p_scratch_interleaved_b++; p_Fout++;
+
+        (*p_Fout).r = (*p_scratch_interleaved_a).r + (*p_scratch_interleaved_b).i;
+        (*p_Fout).i = (*p_scratch_interleaved_a).i - (*p_scratch_interleaved_b).r;
+        p_scratch_interleaved_a++;  p_scratch_interleaved_b++; p_Fout++;
+
+        (*p_Fout).r = (*p_scratch_interleaved_a).r + (*p_scratch_interleaved_b).i;
+        (*p_Fout).i = (*p_scratch_interleaved_a).i - (*p_scratch_interleaved_b).r;
+        p_scratch_interleaved_a++;  p_scratch_interleaved_b++; p_Fout++;
+
+        (*p_Fout).r = (*p_scratch_interleaved_a).r + (*p_scratch_interleaved_b).i;
+        (*p_Fout).i = (*p_scratch_interleaved_a).i - (*p_scratch_interleaved_b).r;
+#else
+        Fout[4].r = scratch_interleaved[5 * 4].r - scratch_interleaved[4 * 4].i;
+        Fout[4].i = scratch_interleaved[5 * 4].i + scratch_interleaved[4 * 4].r;
+        Fout[4 + 1].r = scratch_interleaved[5 * 4 + 1].r - scratch_interleaved[4 * 4 + 1].i;
+        Fout[4 + 1].i = scratch_interleaved[5 * 4 + 1].i + scratch_interleaved[4 * 4 + 1].r;
+        Fout[4 + 2].r = scratch_interleaved[5 * 4 + 2].r - scratch_interleaved[4 * 4 + 2].i;
+        Fout[4 + 2].i = scratch_interleaved[5 * 4 + 2].i + scratch_interleaved[4 * 4 + 2].r;
+        Fout[4 + 3].r = scratch_interleaved[5 * 4 + 3].r - scratch_interleaved[4 * 4 + 3].i;
+        Fout[4 + 3].i = scratch_interleaved[5 * 4 + 3].i + scratch_interleaved[4 * 4 + 3].r;
+
+        Fout[12].r = scratch_interleaved[5 * 4].r + scratch_interleaved[4 * 4].i;
+        Fout[12].i = scratch_interleaved[5 * 4].i - scratch_interleaved[4 * 4].r;
+        Fout[12 + 1].r = scratch_interleaved[5 * 4 + 1].r + scratch_interleaved[4 * 4 + 1].i;
+        Fout[12 + 1].i = scratch_interleaved[5 * 4 + 1].i - scratch_interleaved[4 * 4 + 1].r;
+        Fout[12 + 2].r = scratch_interleaved[5 * 4 + 2].r + scratch_interleaved[4 * 4 + 2].i;
+        Fout[12 + 2].i = scratch_interleaved[5 * 4 + 2].i - scratch_interleaved[4 * 4 + 2].r;
+        Fout[12 + 3].r = scratch_interleaved[5 * 4 + 3].r + scratch_interleaved[4 * 4 + 3].i;
+        Fout[12 + 3].i = scratch_interleaved[5 * 4 + 3].i - scratch_interleaved[4 * 4 + 3].r;
+
+#endif
 
     }
     else {
-        Fout[4].r   = scratch_interleaved[5*4].r    + scratch_interleaved[4*4].i;
-        Fout[4].i   = scratch_interleaved[5*4].i    - scratch_interleaved[4*4].r;
-        Fout[4+1].r = scratch_interleaved[5*4 +1].r + scratch_interleaved[4*4 +1].i;
-        Fout[4+1].i = scratch_interleaved[5*4 +1].i - scratch_interleaved[4*4 +1].r;
-        Fout[4+2].r = scratch_interleaved[5*4 +2].r + scratch_interleaved[4*4 +2].i;
-        Fout[4+2].i = scratch_interleaved[5*4 +2].i - scratch_interleaved[4*4 +2].r;
-        Fout[4+3].r = scratch_interleaved[5*4 +3].r + scratch_interleaved[4*4 +3].i;
-        Fout[4+3].i = scratch_interleaved[5*4 +3].i - scratch_interleaved[4*4 +3].r;
 
-        Fout[12].r   = scratch_interleaved[5*4].r    - scratch_interleaved[4*4].i;
-        Fout[12].i   = scratch_interleaved[5*4].i    + scratch_interleaved[4*4].r;
-        Fout[12+1].r = scratch_interleaved[5*4 +1].r - scratch_interleaved[4*4 +1].i;
-        Fout[12+1].i = scratch_interleaved[5*4 +1].i + scratch_interleaved[4*4 +1].r;
-        Fout[12+2].r = scratch_interleaved[5*4 +2].r - scratch_interleaved[4*4 +2].i;
-        Fout[12+2].i = scratch_interleaved[5*4 +2].i + scratch_interleaved[4*4 +2].r;
-        Fout[12+3].r = scratch_interleaved[5*4 +3].r - scratch_interleaved[4*4 +3].i;
-        Fout[12+3].i = scratch_interleaved[5*4 +3].i + scratch_interleaved[4*4 +3].r;
+        p_scratch_interleaved_a = &scratch_interleaved[5 * 4];
+        p_scratch_interleaved_b = &scratch_interleaved[4 * 4];
+        p_Fout = &Fout[4];
+
+        (*p_Fout).r = (*p_scratch_interleaved_a).r + (*p_scratch_interleaved_b).i; // ->
+        (*p_Fout).i = (*p_scratch_interleaved_a).i - (*p_scratch_interleaved_b).r;
+        p_scratch_interleaved_a++; p_scratch_interleaved_b++; p_Fout++;
+
+        (*p_Fout).r = (*p_scratch_interleaved_a).r + (*p_scratch_interleaved_b).i;
+        (*p_Fout).i = (*p_scratch_interleaved_a).i - (*p_scratch_interleaved_b).r;
+        p_scratch_interleaved_a++; p_scratch_interleaved_b++; p_Fout++;
+
+        (*p_Fout).r = (*p_scratch_interleaved_a).r + (*p_scratch_interleaved_b).i;
+        (*p_Fout).i = (*p_scratch_interleaved_a).i - (*p_scratch_interleaved_b).r;
+        p_scratch_interleaved_a++; p_scratch_interleaved_b++; p_Fout++;
+
+        (*p_Fout).r = (*p_scratch_interleaved_a).r + (*p_scratch_interleaved_b).i;
+        (*p_Fout).i = (*p_scratch_interleaved_a).i - (*p_scratch_interleaved_b).r;
+
+
+
+        p_scratch_interleaved_a = &scratch_interleaved[5 * 4];
+        p_scratch_interleaved_b = &scratch_interleaved[4 * 4];
+        p_Fout = &Fout[12];
+
+        (*p_Fout).r = (*p_scratch_interleaved_a).r - (*p_scratch_interleaved_b).i;
+        (*p_Fout).i = (*p_scratch_interleaved_a).i + (*p_scratch_interleaved_b).r;
+        p_scratch_interleaved_a++;  p_scratch_interleaved_b++; p_Fout++;
+
+        (*p_Fout).r = (*p_scratch_interleaved_a).r - (*p_scratch_interleaved_b).i;
+        (*p_Fout).i = (*p_scratch_interleaved_a).i + (*p_scratch_interleaved_b).r;
+        p_scratch_interleaved_a++;  p_scratch_interleaved_b++; p_Fout++;
+
+        (*p_Fout).r = (*p_scratch_interleaved_a).r - (*p_scratch_interleaved_b).i;
+        (*p_Fout).i = (*p_scratch_interleaved_a).i + (*p_scratch_interleaved_b).r;
+        p_scratch_interleaved_a++;  p_scratch_interleaved_b++; p_Fout++;
+
+        (*p_Fout).r = (*p_scratch_interleaved_a).r - (*p_scratch_interleaved_b).i;
+        (*p_Fout).i = (*p_scratch_interleaved_a).i + (*p_scratch_interleaved_b).r;
+
+
     }
 #else
 
