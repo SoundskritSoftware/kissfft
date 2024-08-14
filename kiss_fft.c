@@ -900,9 +900,8 @@ static void kf_bfly4_m4_multiple_scratches(
 }
 
 
-static void kf_bfly4_m16_multiple_scratches(
+static void kf_bfly4_m16_fstride4_multiple_scratches(
     kiss_fft_cpx* Fout,
-    const size_t fstride,
     const kiss_fft_cfg st
 )
 {
@@ -922,47 +921,111 @@ static void kf_bfly4_m16_multiple_scratches(
 
 
     tw3 = tw2 = tw1 = st->twiddles;
-
+    kiss_fft_cpx* p_tw;
 
 #if 1
-    C_MUL(scratch_interleaved[0],      Fout[16],     *(tw1 + 0));              
-    C_MUL(scratch_interleaved[0 + 1],  Fout[16 + 1], *(tw1 + 1 * fstride));    
-    C_MUL(scratch_interleaved[0 + 2],  Fout[16 + 2], *(tw1 + 2 * fstride));
-    C_MUL(scratch_interleaved[0 + 3],  Fout[16 + 3], *(tw1 + 3 * fstride)); 
-    C_MUL(scratch_interleaved[0 + 4],  Fout[16 + 4], *(tw1 + 4 * fstride));
-    C_MUL(scratch_interleaved[0 + 5],  Fout[16 + 5], *(tw1 + 5 * fstride));
-    C_MUL(scratch_interleaved[0 + 6],  Fout[16 + 6], *(tw1 + 6 * fstride));
-    C_MUL(scratch_interleaved[0 + 7],  Fout[16 + 7], *(tw1 + 7 * fstride));
-    C_MUL(scratch_interleaved[0 + 8],  Fout[16 + 8], *(tw1 + 8 * fstride));
-    C_MUL(scratch_interleaved[0 + 9],  Fout[16 + 9], *(tw1 + 9 * fstride));
-    C_MUL(scratch_interleaved[0 + 10], Fout[16 + 10], *(tw1 + 10 * fstride));
-    C_MUL(scratch_interleaved[0 + 11], Fout[16 + 11], *(tw1 + 11 * fstride));
-    C_MUL(scratch_interleaved[0 + 12], Fout[16 + 12], *(tw1 + 12 * fstride));
-    C_MUL(scratch_interleaved[0 + 13], Fout[16 + 13], *(tw1 + 13 * fstride));
-    C_MUL(scratch_interleaved[0 + 14], Fout[16 + 14], *(tw1 + 14 * fstride));
-    C_MUL(scratch_interleaved[0 + 15], Fout[16 + 15], *(tw1 + 15 * fstride));
+
+    p_scratch_interleaved_a = &scratch_interleaved[0];
+    p_Fout = &Fout[16];
+    p_tw = (tw1 + 0 * 4); // p_tw = (tw1 + 0 * 1 * fstride);
+     
+    C_MUL(*p_scratch_interleaved_a, *p_Fout, *(p_tw)); p_scratch_interleaved_a++; p_Fout++; p_tw += 4;
+    C_MUL(*p_scratch_interleaved_a, *p_Fout, *(p_tw)); p_scratch_interleaved_a++; p_Fout++; p_tw += 4;
+    C_MUL(*p_scratch_interleaved_a, *p_Fout, *(p_tw)); p_scratch_interleaved_a++; p_Fout++; p_tw += 4;
+    C_MUL(*p_scratch_interleaved_a, *p_Fout, *(p_tw)); p_scratch_interleaved_a++; p_Fout++; p_tw += 4;
+    C_MUL(*p_scratch_interleaved_a, *p_Fout, *(p_tw)); p_scratch_interleaved_a++; p_Fout++; p_tw += 4;
+    C_MUL(*p_scratch_interleaved_a, *p_Fout, *(p_tw)); p_scratch_interleaved_a++; p_Fout++; p_tw += 4;
+    C_MUL(*p_scratch_interleaved_a, *p_Fout, *(p_tw)); p_scratch_interleaved_a++; p_Fout++; p_tw += 4;
+    C_MUL(*p_scratch_interleaved_a, *p_Fout, *(p_tw)); p_scratch_interleaved_a++; p_Fout++; p_tw += 4;
+    C_MUL(*p_scratch_interleaved_a, *p_Fout, *(p_tw)); p_scratch_interleaved_a++; p_Fout++; p_tw += 4;
+    C_MUL(*p_scratch_interleaved_a, *p_Fout, *(p_tw)); p_scratch_interleaved_a++; p_Fout++; p_tw += 4;
+    C_MUL(*p_scratch_interleaved_a, *p_Fout, *(p_tw)); p_scratch_interleaved_a++; p_Fout++; p_tw += 4;
+    C_MUL(*p_scratch_interleaved_a, *p_Fout, *(p_tw)); p_scratch_interleaved_a++; p_Fout++; p_tw += 4;
+    C_MUL(*p_scratch_interleaved_a, *p_Fout, *(p_tw)); p_scratch_interleaved_a++; p_Fout++; p_tw += 4;
+    C_MUL(*p_scratch_interleaved_a, *p_Fout, *(p_tw)); p_scratch_interleaved_a++; p_Fout++; p_tw += 4;
+    C_MUL(*p_scratch_interleaved_a, *p_Fout, *(p_tw)); p_scratch_interleaved_a++; p_Fout++; p_tw += 4;
+    C_MUL(*p_scratch_interleaved_a, *p_Fout, *(p_tw)); p_scratch_interleaved_a++; p_Fout++; p_tw += 4;
 
 
-
-    C_MUL(scratch_interleaved[1 * 16],         Fout[32],      *(tw2 + 0));
-    C_MUL(scratch_interleaved[1 * 16 + 1],     Fout[32 + 1],  *(tw2 + 1 * 2 * fstride));
-    C_MUL(scratch_interleaved[1 * 16 + 2],     Fout[32 + 2],  *(tw2 + 2 * 2 * fstride));
-    C_MUL(scratch_interleaved[1 * 16 + 3],     Fout[32 + 3],  *(tw2 + 3 * 2 * fstride));
-    C_MUL(scratch_interleaved[1 * 16 + 4],     Fout[32 + 4],  *(tw2 + 4 * 2 * fstride));
-    C_MUL(scratch_interleaved[1 * 16 + 5],     Fout[32 + 5],  *(tw2 + 5 * 2 * fstride));
-    C_MUL(scratch_interleaved[1 * 16 + 6],     Fout[32 + 6],  *(tw2 + 6 * 2 * fstride));
-    C_MUL(scratch_interleaved[1 * 16 + 7],     Fout[32 + 7],  *(tw2 + 7 * 2 * fstride));
-    C_MUL(scratch_interleaved[1 * 16 + 8],     Fout[32 + 8],  *(tw2 + 8 * 2 * fstride));
-    C_MUL(scratch_interleaved[1 * 16 + 9],     Fout[32 + 9],  *(tw2 + 9 * 2 * fstride));
-    C_MUL(scratch_interleaved[1 * 16 + 10],    Fout[32 + 10], *(tw2 + 10 * 2 * fstride));
-    C_MUL(scratch_interleaved[1 * 16 + 11],    Fout[32 + 11], *(tw2 + 11 * 2 * fstride));
-    C_MUL(scratch_interleaved[1 * 16 + 12],    Fout[32 + 12], *(tw2 + 12 * 2 * fstride));
-    C_MUL(scratch_interleaved[1 * 16 + 13],    Fout[32 + 13], *(tw2 + 13 * 2 * fstride));
-    C_MUL(scratch_interleaved[1 * 16 + 14],    Fout[32 + 14], *(tw2 + 14 * 2 * fstride));
-    C_MUL(scratch_interleaved[1 * 16 + 15],    Fout[32 + 15], *(tw2 + 15 * 2 * fstride));
-
+    // C_MUL(scratch_interleaved[0],      Fout[16],     *(tw1 + 0));              
+    // C_MUL(scratch_interleaved[0 + 1],  Fout[16 + 1], *(tw1 + 1 * fstride));    
+    // C_MUL(scratch_interleaved[0 + 2],  Fout[16 + 2], *(tw1 + 2 * fstride));
+    // C_MUL(scratch_interleaved[0 + 3],  Fout[16 + 3], *(tw1 + 3 * fstride)); 
+    // C_MUL(scratch_interleaved[0 + 4],  Fout[16 + 4], *(tw1 + 4 * fstride));
+    // C_MUL(scratch_interleaved[0 + 5],  Fout[16 + 5], *(tw1 + 5 * fstride));
+    // C_MUL(scratch_interleaved[0 + 6],  Fout[16 + 6], *(tw1 + 6 * fstride));
+    // C_MUL(scratch_interleaved[0 + 7],  Fout[16 + 7], *(tw1 + 7 * fstride));
+    // C_MUL(scratch_interleaved[0 + 8],  Fout[16 + 8], *(tw1 + 8 * fstride));
+    // C_MUL(scratch_interleaved[0 + 9],  Fout[16 + 9], *(tw1 + 9 * fstride));
+    // C_MUL(scratch_interleaved[0 + 10], Fout[16 + 10], *(tw1 + 10 * fstride));
+    // C_MUL(scratch_interleaved[0 + 11], Fout[16 + 11], *(tw1 + 11 * fstride));
+    // C_MUL(scratch_interleaved[0 + 12], Fout[16 + 12], *(tw1 + 12 * fstride));
+    // C_MUL(scratch_interleaved[0 + 13], Fout[16 + 13], *(tw1 + 13 * fstride));
+    // C_MUL(scratch_interleaved[0 + 14], Fout[16 + 14], *(tw1 + 14 * fstride));
+    // C_MUL(scratch_interleaved[0 + 15], Fout[16 + 15], *(tw1 + 15 * fstride));
 
 
+    p_scratch_interleaved_a = &scratch_interleaved[16];
+    p_Fout = &Fout[32];
+    p_tw = (tw2 + 0 * 8);  // p_tw = (tw2 + 0 * 2 * fstride);
+    
+    C_MUL(*p_scratch_interleaved_a, *p_Fout, *(p_tw)); p_scratch_interleaved_a++; p_Fout++; p_tw += 8;
+    C_MUL(*p_scratch_interleaved_a, *p_Fout, *(p_tw)); p_scratch_interleaved_a++; p_Fout++; p_tw += 8;
+    C_MUL(*p_scratch_interleaved_a, *p_Fout, *(p_tw)); p_scratch_interleaved_a++; p_Fout++; p_tw += 8;
+    C_MUL(*p_scratch_interleaved_a, *p_Fout, *(p_tw)); p_scratch_interleaved_a++; p_Fout++; p_tw += 8;
+    C_MUL(*p_scratch_interleaved_a, *p_Fout, *(p_tw)); p_scratch_interleaved_a++; p_Fout++; p_tw += 8;
+    C_MUL(*p_scratch_interleaved_a, *p_Fout, *(p_tw)); p_scratch_interleaved_a++; p_Fout++; p_tw += 8;
+    C_MUL(*p_scratch_interleaved_a, *p_Fout, *(p_tw)); p_scratch_interleaved_a++; p_Fout++; p_tw += 8;
+    C_MUL(*p_scratch_interleaved_a, *p_Fout, *(p_tw)); p_scratch_interleaved_a++; p_Fout++; p_tw += 8;
+    C_MUL(*p_scratch_interleaved_a, *p_Fout, *(p_tw)); p_scratch_interleaved_a++; p_Fout++; p_tw += 8;
+    C_MUL(*p_scratch_interleaved_a, *p_Fout, *(p_tw)); p_scratch_interleaved_a++; p_Fout++; p_tw += 8;
+    C_MUL(*p_scratch_interleaved_a, *p_Fout, *(p_tw)); p_scratch_interleaved_a++; p_Fout++; p_tw += 8;
+    C_MUL(*p_scratch_interleaved_a, *p_Fout, *(p_tw)); p_scratch_interleaved_a++; p_Fout++; p_tw += 8;
+    C_MUL(*p_scratch_interleaved_a, *p_Fout, *(p_tw)); p_scratch_interleaved_a++; p_Fout++; p_tw += 8;
+    C_MUL(*p_scratch_interleaved_a, *p_Fout, *(p_tw)); p_scratch_interleaved_a++; p_Fout++; p_tw += 8;
+    C_MUL(*p_scratch_interleaved_a, *p_Fout, *(p_tw)); p_scratch_interleaved_a++; p_Fout++; p_tw += 8;
+    C_MUL(*p_scratch_interleaved_a, *p_Fout, *(p_tw)); p_scratch_interleaved_a++; p_Fout++; p_tw += 8;
+
+
+    // C_MUL(scratch_interleaved[1 * 16],         Fout[32],      *(tw2 + 0));
+    // C_MUL(scratch_interleaved[1 * 16 + 1],     Fout[32 + 1],  *(tw2 + 1 * 2 * fstride));
+    // C_MUL(scratch_interleaved[1 * 16 + 2],     Fout[32 + 2],  *(tw2 + 2 * 2 * fstride));
+    // C_MUL(scratch_interleaved[1 * 16 + 3],     Fout[32 + 3],  *(tw2 + 3 * 2 * fstride));
+    // C_MUL(scratch_interleaved[1 * 16 + 4],     Fout[32 + 4],  *(tw2 + 4 * 2 * fstride));
+    // C_MUL(scratch_interleaved[1 * 16 + 5],     Fout[32 + 5],  *(tw2 + 5 * 2 * fstride));
+    // C_MUL(scratch_interleaved[1 * 16 + 6],     Fout[32 + 6],  *(tw2 + 6 * 2 * fstride));
+    // C_MUL(scratch_interleaved[1 * 16 + 7],     Fout[32 + 7],  *(tw2 + 7 * 2 * fstride));
+    // C_MUL(scratch_interleaved[1 * 16 + 8],     Fout[32 + 8],  *(tw2 + 8 * 2 * fstride));
+    // C_MUL(scratch_interleaved[1 * 16 + 9],     Fout[32 + 9],  *(tw2 + 9 * 2 * fstride));
+    // C_MUL(scratch_interleaved[1 * 16 + 10],    Fout[32 + 10], *(tw2 + 10 * 2 * fstride));
+    // C_MUL(scratch_interleaved[1 * 16 + 11],    Fout[32 + 11], *(tw2 + 11 * 2 * fstride));
+    // C_MUL(scratch_interleaved[1 * 16 + 12],    Fout[32 + 12], *(tw2 + 12 * 2 * fstride));
+    // C_MUL(scratch_interleaved[1 * 16 + 13],    Fout[32 + 13], *(tw2 + 13 * 2 * fstride));
+    // C_MUL(scratch_interleaved[1 * 16 + 14],    Fout[32 + 14], *(tw2 + 14 * 2 * fstride));
+    // C_MUL(scratch_interleaved[1 * 16 + 15],    Fout[32 + 15], *(tw2 + 15 * 2 * fstride));
+
+    p_scratch_interleaved_a = &scratch_interleaved[32];
+    p_Fout = &Fout[48];
+    p_tw = (tw3 + 0 * 12);  // p_tw = (tw3 + 0 * 3 * fstride);
+
+    C_MUL(*p_scratch_interleaved_a, *p_Fout, *(p_tw)); p_scratch_interleaved_a++; p_Fout++; p_tw += 12;
+    C_MUL(*p_scratch_interleaved_a, *p_Fout, *(p_tw)); p_scratch_interleaved_a++; p_Fout++; p_tw += 12;
+    C_MUL(*p_scratch_interleaved_a, *p_Fout, *(p_tw)); p_scratch_interleaved_a++; p_Fout++; p_tw += 12;
+    C_MUL(*p_scratch_interleaved_a, *p_Fout, *(p_tw)); p_scratch_interleaved_a++; p_Fout++; p_tw += 12;
+    C_MUL(*p_scratch_interleaved_a, *p_Fout, *(p_tw)); p_scratch_interleaved_a++; p_Fout++; p_tw += 12;
+    C_MUL(*p_scratch_interleaved_a, *p_Fout, *(p_tw)); p_scratch_interleaved_a++; p_Fout++; p_tw += 12;
+    C_MUL(*p_scratch_interleaved_a, *p_Fout, *(p_tw)); p_scratch_interleaved_a++; p_Fout++; p_tw += 12;
+    C_MUL(*p_scratch_interleaved_a, *p_Fout, *(p_tw)); p_scratch_interleaved_a++; p_Fout++; p_tw += 12;
+    C_MUL(*p_scratch_interleaved_a, *p_Fout, *(p_tw)); p_scratch_interleaved_a++; p_Fout++; p_tw += 12;
+    C_MUL(*p_scratch_interleaved_a, *p_Fout, *(p_tw)); p_scratch_interleaved_a++; p_Fout++; p_tw += 12;
+    C_MUL(*p_scratch_interleaved_a, *p_Fout, *(p_tw)); p_scratch_interleaved_a++; p_Fout++; p_tw += 12;
+    C_MUL(*p_scratch_interleaved_a, *p_Fout, *(p_tw)); p_scratch_interleaved_a++; p_Fout++; p_tw += 12;
+    C_MUL(*p_scratch_interleaved_a, *p_Fout, *(p_tw)); p_scratch_interleaved_a++; p_Fout++; p_tw += 12;
+    C_MUL(*p_scratch_interleaved_a, *p_Fout, *(p_tw)); p_scratch_interleaved_a++; p_Fout++; p_tw += 12;
+    C_MUL(*p_scratch_interleaved_a, *p_Fout, *(p_tw)); p_scratch_interleaved_a++; p_Fout++; p_tw += 12;
+    C_MUL(*p_scratch_interleaved_a, *p_Fout, *(p_tw)); p_scratch_interleaved_a++; p_Fout++; p_tw += 12;
+
+    /*
 
     C_MUL(scratch_interleaved[2 * 16],     Fout[48],       *(tw3 + 0));
     C_MUL(scratch_interleaved[2 * 16 + 1], Fout[48 + 1],   *(tw3 + 1 * 3 * fstride));
@@ -980,7 +1043,7 @@ static void kf_bfly4_m16_multiple_scratches(
     C_MUL(scratch_interleaved[2 * 16 + 13], Fout[48 + 13], *(tw3 + 13 * 3 * fstride));
     C_MUL(scratch_interleaved[2 * 16 + 14], Fout[48 + 14], *(tw3 + 14 * 3 * fstride));
     C_MUL(scratch_interleaved[2 * 16 + 15], Fout[48 + 15], *(tw3 + 15 * 3 * fstride));
-
+    */
 
     p_scratch_interleaved_a = &scratch_interleaved[1 * 16];
     p_scratch_interleaved_b = &scratch_interleaved[5 * 16];
@@ -1624,24 +1687,24 @@ static void kf_bfly4_m64_fstride1_multiple_scratches(
 
         p_scratch_interleaved_a = &scratch_interleaved[1 * 64 + i * 16];
         p_Fout = &Fout[128 + i * 16];
+        p_tw = (tw2 + 0 + i * 16 * 2);
 
-
-        C_MUL(*p_scratch_interleaved_a, *p_Fout, *(tw2 + 0 + i * 16 * 2)); p_scratch_interleaved_a++; p_Fout++;
-        C_MUL(*p_scratch_interleaved_a, *p_Fout, *(tw2 + 1 * 2 + i * 16 * 2)); p_scratch_interleaved_a++; p_Fout++; 
-        C_MUL(*p_scratch_interleaved_a, *p_Fout, *(tw2 + 2 * 2 + i * 16 * 2)); p_scratch_interleaved_a++; p_Fout++; 
-        C_MUL(*p_scratch_interleaved_a, *p_Fout, *(tw2 + 3 * 2 + i * 16 * 2)); p_scratch_interleaved_a++; p_Fout++; 
-        C_MUL(*p_scratch_interleaved_a, *p_Fout, *(tw2 + 4 * 2 + i * 16 * 2)); p_scratch_interleaved_a++; p_Fout++; 
-        C_MUL(*p_scratch_interleaved_a, *p_Fout, *(tw2 + 5 * 2 + i * 16 * 2)); p_scratch_interleaved_a++; p_Fout++;
-        C_MUL(*p_scratch_interleaved_a, *p_Fout, *(tw2 + 6 * 2 + i * 16 * 2)); p_scratch_interleaved_a++; p_Fout++;
-        C_MUL(*p_scratch_interleaved_a, *p_Fout, *(tw2 + 7 * 2 + i * 16 * 2)); p_scratch_interleaved_a++; p_Fout++; 
-        C_MUL(*p_scratch_interleaved_a, *p_Fout, *(tw2 + 8 * 2 + i * 16 * 2)); p_scratch_interleaved_a++; p_Fout++; 
-        C_MUL(*p_scratch_interleaved_a, *p_Fout, *(tw2 + 9 * 2 + i * 16 * 2)); p_scratch_interleaved_a++; p_Fout++; 
-        C_MUL(*p_scratch_interleaved_a, *p_Fout, *(tw2 + 10 * 2 + i * 16 * 2)); p_scratch_interleaved_a++; p_Fout++; 
-        C_MUL(*p_scratch_interleaved_a, *p_Fout, *(tw2 + 11 * 2 + i * 16 * 2)); p_scratch_interleaved_a++; p_Fout++;
-        C_MUL(*p_scratch_interleaved_a, *p_Fout, *(tw2 + 12 * 2 + i * 16 * 2)); p_scratch_interleaved_a++; p_Fout++; 
-        C_MUL(*p_scratch_interleaved_a, *p_Fout, *(tw2 + 13 * 2 + i * 16 * 2)); p_scratch_interleaved_a++; p_Fout++;
-        C_MUL(*p_scratch_interleaved_a, *p_Fout, *(tw2 + 14 * 2 + i * 16 * 2)); p_scratch_interleaved_a++; p_Fout++; 
-        C_MUL(*p_scratch_interleaved_a, *p_Fout, *(tw2 + 15 * 2 + i * 16 * 2)); p_scratch_interleaved_a++; p_Fout++; 
+        C_MUL(*p_scratch_interleaved_a, *p_Fout, *(p_tw)); p_scratch_interleaved_a++; p_Fout++; p_tw += 2;
+        C_MUL(*p_scratch_interleaved_a, *p_Fout, *(p_tw)); p_scratch_interleaved_a++; p_Fout++; p_tw += 2;
+        C_MUL(*p_scratch_interleaved_a, *p_Fout, *(p_tw)); p_scratch_interleaved_a++; p_Fout++; p_tw += 2;
+        C_MUL(*p_scratch_interleaved_a, *p_Fout, *(p_tw)); p_scratch_interleaved_a++; p_Fout++; p_tw += 2;
+        C_MUL(*p_scratch_interleaved_a, *p_Fout, *(p_tw)); p_scratch_interleaved_a++; p_Fout++; p_tw += 2;
+        C_MUL(*p_scratch_interleaved_a, *p_Fout, *(p_tw)); p_scratch_interleaved_a++; p_Fout++; p_tw += 2;
+        C_MUL(*p_scratch_interleaved_a, *p_Fout, *(p_tw)); p_scratch_interleaved_a++; p_Fout++; p_tw += 2;
+        C_MUL(*p_scratch_interleaved_a, *p_Fout, *(p_tw)); p_scratch_interleaved_a++; p_Fout++; p_tw += 2;
+        C_MUL(*p_scratch_interleaved_a, *p_Fout, *(p_tw)); p_scratch_interleaved_a++; p_Fout++; p_tw += 2;
+        C_MUL(*p_scratch_interleaved_a, *p_Fout, *(p_tw)); p_scratch_interleaved_a++; p_Fout++; p_tw += 2;
+        C_MUL(*p_scratch_interleaved_a, *p_Fout, *(p_tw)); p_scratch_interleaved_a++; p_Fout++; p_tw += 2;
+        C_MUL(*p_scratch_interleaved_a, *p_Fout, *(p_tw)); p_scratch_interleaved_a++; p_Fout++; p_tw += 2;
+        C_MUL(*p_scratch_interleaved_a, *p_Fout, *(p_tw)); p_scratch_interleaved_a++; p_Fout++; p_tw += 2;
+        C_MUL(*p_scratch_interleaved_a, *p_Fout, *(p_tw)); p_scratch_interleaved_a++; p_Fout++; p_tw += 2;
+        C_MUL(*p_scratch_interleaved_a, *p_Fout, *(p_tw)); p_scratch_interleaved_a++; p_Fout++; p_tw += 2;
+        C_MUL(*p_scratch_interleaved_a, *p_Fout, *(p_tw)); p_scratch_interleaved_a++; p_Fout++; p_tw += 2;
 
 
         // C_MUL(scratch_interleaved[1 * 64     + i * 16], Fout[128 + i * 16],     *(tw2 + 0 + i * 16 * 2 ));
@@ -1664,24 +1727,24 @@ static void kf_bfly4_m64_fstride1_multiple_scratches(
 
         p_scratch_interleaved_a = &scratch_interleaved[2 * 64 + i * 16];
         p_Fout = &Fout[192 + i * 16];
+        p_tw = (tw3 + 0 + i * 16 * 3);
 
-
-        C_MUL(*p_scratch_interleaved_a, *p_Fout, *(tw3 + 0 + i * 16 * 3)); p_scratch_interleaved_a++; p_Fout++;
-        C_MUL(*p_scratch_interleaved_a, *p_Fout, *(tw3 + 1 * 3 + i * 16 * 3)); p_scratch_interleaved_a++; p_Fout++;
-        C_MUL(*p_scratch_interleaved_a, *p_Fout, *(tw3 + 2 * 3 + i * 16 * 3)); p_scratch_interleaved_a++; p_Fout++;
-        C_MUL(*p_scratch_interleaved_a, *p_Fout, *(tw3 + 3 * 3 + i * 16 * 3)); p_scratch_interleaved_a++; p_Fout++;
-        C_MUL(*p_scratch_interleaved_a, *p_Fout, *(tw3 + 4 * 3 + i * 16 * 3)); p_scratch_interleaved_a++; p_Fout++;
-        C_MUL(*p_scratch_interleaved_a, *p_Fout, *(tw3 + 5 * 3 + i * 16 * 3)); p_scratch_interleaved_a++; p_Fout++;
-        C_MUL(*p_scratch_interleaved_a, *p_Fout, *(tw3 + 6 * 3 + i * 16 * 3)); p_scratch_interleaved_a++; p_Fout++;
-        C_MUL(*p_scratch_interleaved_a, *p_Fout, *(tw3 + 7 * 3 + i * 16 * 3)); p_scratch_interleaved_a++; p_Fout++;
-        C_MUL(*p_scratch_interleaved_a, *p_Fout, *(tw3 + 8 * 3 + i * 16 * 3)); p_scratch_interleaved_a++; p_Fout++;
-        C_MUL(*p_scratch_interleaved_a, *p_Fout, *(tw3 + 9 * 3 + i * 16 * 3)); p_scratch_interleaved_a++; p_Fout++;
-        C_MUL(*p_scratch_interleaved_a, *p_Fout, *(tw3 + 10 * 3 + i * 16 * 3)); p_scratch_interleaved_a++; p_Fout++;
-        C_MUL(*p_scratch_interleaved_a, *p_Fout, *(tw3 + 11 * 3 + i * 16 * 3)); p_scratch_interleaved_a++; p_Fout++;
-        C_MUL(*p_scratch_interleaved_a, *p_Fout, *(tw3 + 12 * 3 + i * 16 * 3)); p_scratch_interleaved_a++; p_Fout++;
-        C_MUL(*p_scratch_interleaved_a, *p_Fout, *(tw3 + 13 * 3 + i * 16 * 3)); p_scratch_interleaved_a++; p_Fout++;
-        C_MUL(*p_scratch_interleaved_a, *p_Fout, *(tw3 + 14 * 3 + i * 16 * 3)); p_scratch_interleaved_a++; p_Fout++;
-        C_MUL(*p_scratch_interleaved_a, *p_Fout, *(tw3 + 15 * 3 + i * 16 * 3)); p_scratch_interleaved_a++; p_Fout++;
+        C_MUL(*p_scratch_interleaved_a, *p_Fout, *(p_tw)); p_scratch_interleaved_a++; p_Fout++; p_tw += 3;
+        C_MUL(*p_scratch_interleaved_a, *p_Fout, *(p_tw)); p_scratch_interleaved_a++; p_Fout++; p_tw += 3;
+        C_MUL(*p_scratch_interleaved_a, *p_Fout, *(p_tw)); p_scratch_interleaved_a++; p_Fout++; p_tw += 3;
+        C_MUL(*p_scratch_interleaved_a, *p_Fout, *(p_tw)); p_scratch_interleaved_a++; p_Fout++; p_tw += 3;
+        C_MUL(*p_scratch_interleaved_a, *p_Fout, *(p_tw)); p_scratch_interleaved_a++; p_Fout++; p_tw += 3;
+        C_MUL(*p_scratch_interleaved_a, *p_Fout, *(p_tw)); p_scratch_interleaved_a++; p_Fout++; p_tw += 3;
+        C_MUL(*p_scratch_interleaved_a, *p_Fout, *(p_tw)); p_scratch_interleaved_a++; p_Fout++; p_tw += 3;
+        C_MUL(*p_scratch_interleaved_a, *p_Fout, *(p_tw)); p_scratch_interleaved_a++; p_Fout++; p_tw += 3;
+        C_MUL(*p_scratch_interleaved_a, *p_Fout, *(p_tw)); p_scratch_interleaved_a++; p_Fout++; p_tw += 3;
+        C_MUL(*p_scratch_interleaved_a, *p_Fout, *(p_tw)); p_scratch_interleaved_a++; p_Fout++; p_tw += 3;
+        C_MUL(*p_scratch_interleaved_a, *p_Fout, *(p_tw)); p_scratch_interleaved_a++; p_Fout++; p_tw += 3;
+        C_MUL(*p_scratch_interleaved_a, *p_Fout, *(p_tw)); p_scratch_interleaved_a++; p_Fout++; p_tw += 3;
+        C_MUL(*p_scratch_interleaved_a, *p_Fout, *(p_tw)); p_scratch_interleaved_a++; p_Fout++; p_tw += 3;
+        C_MUL(*p_scratch_interleaved_a, *p_Fout, *(p_tw)); p_scratch_interleaved_a++; p_Fout++; p_tw += 3;
+        C_MUL(*p_scratch_interleaved_a, *p_Fout, *(p_tw)); p_scratch_interleaved_a++; p_Fout++; p_tw += 3;
+        C_MUL(*p_scratch_interleaved_a, *p_Fout, *(p_tw)); p_scratch_interleaved_a++; p_Fout++; p_tw += 3;
 
 
         // C_MUL(scratch_interleaved[2 * 64 + i * 16],     Fout[192 + i * 16],       *(tw3 + 0 + i * 16 * 3 ));
@@ -2495,7 +2558,7 @@ void kf_work(
                 }
                 else if ((m == 16) && (fstride == 4))
                 {
-                    kf_bfly4_m16_multiple_scratches(Fout, fstride, st);
+                    kf_bfly4_m16_fstride4_multiple_scratches(Fout, st);
                 }
                 else if ((m == 64) && (fstride == 1))
                 {
