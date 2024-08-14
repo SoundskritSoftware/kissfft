@@ -84,6 +84,54 @@ static void kf_bfly4(
     }while(--k);
 }
 
+static void kf_bfly4_m64(
+    kiss_fft_cpx* Fout,
+    const size_t fstride,
+    const kiss_fft_cfg st,
+    const size_t m
+)
+{
+    kiss_fft_cpx* tw1, * tw2, * tw3;
+    kiss_fft_cpx scratch[6];
+    size_t k = m;
+    const size_t m2 = 2 * m;
+    const size_t m3 = 3 * m;
+
+
+    tw3 = tw2 = tw1 = st->twiddles;
+
+    do {
+        C_FIXDIV(*Fout, 4); C_FIXDIV(Fout[m], 4); C_FIXDIV(Fout[m2], 4); C_FIXDIV(Fout[m3], 4);
+
+        C_MUL(scratch[0], Fout[m], *tw1);
+        C_MUL(scratch[1], Fout[m2], *tw2);
+        C_MUL(scratch[2], Fout[m3], *tw3);
+
+        C_SUB(scratch[5], *Fout, scratch[1]);
+        C_ADDTO(*Fout, scratch[1]);
+        C_ADD(scratch[3], scratch[0], scratch[2]);
+        C_SUB(scratch[4], scratch[0], scratch[2]);
+        C_SUB(Fout[m2], *Fout, scratch[3]);
+        tw1 += fstride;
+        tw2 += fstride * 2;
+        tw3 += fstride * 3;
+        C_ADDTO(*Fout, scratch[3]);
+
+        if (st->inverse) {
+            Fout[m].r = scratch[5].r - scratch[4].i;
+            Fout[m].i = scratch[5].i + scratch[4].r;
+            Fout[m3].r = scratch[5].r + scratch[4].i;
+            Fout[m3].i = scratch[5].i - scratch[4].r;
+        }
+        else {
+            Fout[m].r = scratch[5].r + scratch[4].i;
+            Fout[m].i = scratch[5].i - scratch[4].r;
+            Fout[m3].r = scratch[5].r - scratch[4].i;
+            Fout[m3].i = scratch[5].i + scratch[4].r;
+        }
+        ++Fout;
+    } while (--k);
+}
 
 static void kf_bfly4_m1(
     kiss_fft_cpx* Fout,
@@ -1503,6 +1551,7 @@ static void kf_bfly4_m16_multiple_scratches(
 
 }
 
+/*
 static void kf_bfly4_m64_multiple_scratches(
     kiss_fft_cpx* Fout,
     const size_t fstride,
@@ -1528,6 +1577,10 @@ static void kf_bfly4_m64_multiple_scratches(
 
 
 #if 1
+    int i;
+    for (i = 0; i < 4; i++)
+    {
+    }
     C_MUL(scratch_interleaved[0], Fout[16], *(tw1 + 0));
     C_MUL(scratch_interleaved[0 + 1], Fout[16 + 1], *(tw1 + 1 * fstride));
     C_MUL(scratch_interleaved[0 + 2], Fout[16 + 2], *(tw1 + 2 * fstride));
@@ -2154,7 +2207,7 @@ static void kf_bfly4_m64_multiple_scratches(
 #endif
 
 }
-
+*/
 
 
 
@@ -2392,7 +2445,7 @@ void kf_work(
             }
             else if ((m == 64) && (fstride == 1))
             {
-                kf_bfly4_m64_multiple_scratches(Fout, fstride, st);
+                kf_bfly4_m64(Fout, fstride, st, m); // kf_bfly4_m64_multiple_scratches(Fout, fstride, st);
             }
             else
             {
