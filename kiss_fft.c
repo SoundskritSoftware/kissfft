@@ -83,7 +83,6 @@ static void kf_bfly4(
     }while(--k);
 }
 
-/*
 static void kf_bfly4_m4(
     kiss_fft_cpx* Fout,
     const size_t fstride,
@@ -226,7 +225,6 @@ static void kf_bfly4_m4(
 
     // } while (--k);
 }
-*/
 
 /*
 static void kf_bfly4_m4_remapped(
@@ -461,10 +459,8 @@ static void kf_bfly4_m4_multiple_scratches(
 )
 {
     kiss_fft_cpx* tw1, * tw2, * tw3;
-    kiss_fft_cpx scratch1[6];
-    kiss_fft_cpx scratch2[6];
-    kiss_fft_cpx scratch3[6];
-    kiss_fft_cpx scratch4[6];
+
+    kiss_fft_cpx scratch_interleaved[6*4];
 
     const size_t m = 4;
     size_t k = m;
@@ -475,11 +471,99 @@ static void kf_bfly4_m4_multiple_scratches(
     tw3 = tw2 = tw1 = st->twiddles;
 
 
+#if 1
+    C_MUL(scratch_interleaved[0],   Fout[4], *(tw1 + 0));              //  C_MUL(scratch1[0], Fout[4], *(tw1 + 0));
+    C_MUL(scratch_interleaved[0+1], Fout[4+1], *(tw1 + fstride));    //  C_MUL(scratch2[0], Fout[4 + 1], *(tw1 + fstride));
+    C_MUL(scratch_interleaved[0+2], Fout[4+2], *(tw1 + 2 * fstride));//   C_MUL(scratch3[0], Fout[4 + 2], *(tw1 + 2 * fstride));
+    C_MUL(scratch_interleaved[0+3], Fout[4+3], *(tw1 + 3 * fstride)); //  C_MUL(scratch4[0], Fout[4 + 3], *(tw1 + 3 * fstride));
 
-    // do {
-        // C_FIXDIV(*Fout, 4); C_FIXDIV(Fout[m], 4); C_FIXDIV(Fout[m2], 4); C_FIXDIV(Fout[m3], 4);
+    C_MUL(scratch_interleaved[1*4],    Fout[8], *(tw2 + 0));
+    C_MUL(scratch_interleaved[1*4 +1], Fout[8+1], *(tw2 + 2 * fstride));
+    C_MUL(scratch_interleaved[1*4 +2], Fout[8+2], *(tw2 + 2 * 2 * fstride));
+    C_MUL(scratch_interleaved[1*4 +3], Fout[8+3], *(tw2 + 3 * 2 * fstride));
 
-    // 1
+    C_MUL(scratch_interleaved[2*4],    Fout[12], *(tw3 + 0));
+    C_MUL(scratch_interleaved[2*4 +1], Fout[12+1], *(tw3 + 3 * fstride));
+    C_MUL(scratch_interleaved[2*4 +2], Fout[12+2], *(tw3 + 2 * 3 * fstride));
+    C_MUL(scratch_interleaved[2*4 +3], Fout[12+3], *(tw3 + 3 * 3 * fstride));
+
+    C_SUB(scratch_interleaved[5*4],   *Fout,   scratch_interleaved[1*4]);
+    C_SUB(scratch_interleaved[5*4 +1], Fout[1], scratch_interleaved[1*4 +1]);
+    C_SUB(scratch_interleaved[5*4 +2], Fout[2], scratch_interleaved[1*4 +2]);
+    C_SUB(scratch_interleaved[5*4 +3], Fout[3], scratch_interleaved[1*4 +3]);
+
+    C_ADDTO(Fout[0], scratch_interleaved[1*4]);
+    C_ADDTO(Fout[1], scratch_interleaved[1*4 +1]);
+    C_ADDTO(Fout[2], scratch_interleaved[1*4 +2]);
+    C_ADDTO(Fout[3], scratch_interleaved[1*4 +3]);
+
+    C_ADD(scratch_interleaved[3*4],   scratch_interleaved[0],   scratch_interleaved[2*4]);
+    C_ADD(scratch_interleaved[3*4 +1], scratch_interleaved[0+1], scratch_interleaved[2*4 +1]);
+    C_ADD(scratch_interleaved[3*4 +2], scratch_interleaved[0+2], scratch_interleaved[2*4 +2]);
+    C_ADD(scratch_interleaved[3*4 +3], scratch_interleaved[0+3], scratch_interleaved[2*4 +3]);
+
+    C_SUB(scratch_interleaved[4*4],   scratch_interleaved[0],   scratch_interleaved[2*4]);
+    C_SUB(scratch_interleaved[4*4 +1], scratch_interleaved[0+1], scratch_interleaved[2*4 +1]);
+    C_SUB(scratch_interleaved[4*4 +2], scratch_interleaved[0+2], scratch_interleaved[2*4 +2]);
+    C_SUB(scratch_interleaved[4*4 +3], scratch_interleaved[0+3], scratch_interleaved[2*4 +3]);
+
+    C_SUB(Fout[8],    *Fout,    scratch_interleaved[3*4]);
+    C_SUB(Fout[8 + 1], Fout[1], scratch_interleaved[3*4 +1]);
+    C_SUB(Fout[8 + 2], Fout[2], scratch_interleaved[3*4 +2]);
+    C_SUB(Fout[8 + 3], Fout[3], scratch_interleaved[3*4 +3]);
+
+    C_ADDTO(*Fout,   scratch_interleaved[3*4]);
+    C_ADDTO(Fout[1], scratch_interleaved[3*4 +1]);
+    C_ADDTO(Fout[2], scratch_interleaved[3*4 +2]);
+    C_ADDTO(Fout[3], scratch_interleaved[3*4 +3]);
+
+    if (st->inverse) {
+
+        Fout[4].r   = scratch_interleaved[5*4].r    - scratch_interleaved[4*4].i;
+        Fout[4].i   = scratch_interleaved[5*4].i    + scratch_interleaved[4*4].r;
+        Fout[4+1].r = scratch_interleaved[5*4 +1].r - scratch_interleaved[4*4 +1].i;
+        Fout[4+1].i = scratch_interleaved[5*4 +1].i + scratch_interleaved[4*4 +1].r;
+        Fout[4+2].r = scratch_interleaved[5*4 +2].r - scratch_interleaved[4*4 +2].i;
+        Fout[4+2].i = scratch_interleaved[5*4 +2].i + scratch_interleaved[4*4 +2].r;
+        Fout[4+3].r = scratch_interleaved[5*4 +3].r - scratch_interleaved[4*4 +3].i;
+        Fout[4+3].i = scratch_interleaved[5*4 +3].i + scratch_interleaved[4*4 +3].r;
+
+        Fout[12].r   = scratch_interleaved[5*4].r    + scratch_interleaved[4*4].i;
+        Fout[12].i   = scratch_interleaved[5*4].i    - scratch_interleaved[4*4].r;
+        Fout[12+1].r = scratch_interleaved[5*4 +1].r + scratch_interleaved[4*4 +1].i;
+        Fout[12+1].i = scratch_interleaved[5*4 +1].i - scratch_interleaved[4*4 +1].r;
+        Fout[12+2].r = scratch_interleaved[5*4 +2].r + scratch_interleaved[4*4 +2].i;
+        Fout[12+2].i = scratch_interleaved[5*4 +2].i - scratch_interleaved[4*4 +2].r;
+        Fout[12+3].r = scratch_interleaved[5*4 +3].r + scratch_interleaved[4*4 +3].i;
+        Fout[12+3].i = scratch_interleaved[5*4 +3].i - scratch_interleaved[4*4 +3].r;
+
+    }
+    else {
+        Fout[4].r   = scratch_interleaved[5*4].r    + scratch_interleaved[4*4].i;
+        Fout[4].i   = scratch_interleaved[5*4].i    - scratch_interleaved[4*4].r;
+        Fout[4+1].r = scratch_interleaved[5*4 +1].r + scratch_interleaved[4*4 +1].i;
+        Fout[4+1].i = scratch_interleaved[5*4 +1].i - scratch_interleaved[4*4 +1].r;
+        Fout[4+2].r = scratch_interleaved[5*4 +2].r + scratch_interleaved[4*4 +2].i;
+        Fout[4+2].i = scratch_interleaved[5*4 +2].i - scratch_interleaved[4*4 +2].r;
+        Fout[4+3].r = scratch_interleaved[5*4 +3].r + scratch_interleaved[4*4 +3].i;
+        Fout[4+3].i = scratch_interleaved[5*4 +3].i - scratch_interleaved[4*4 +3].r;
+
+        Fout[12].r   = scratch_interleaved[5*4].r    - scratch_interleaved[4*4].i;
+        Fout[12].i   = scratch_interleaved[5*4].i    + scratch_interleaved[4*4].r;
+        Fout[12+1].r = scratch_interleaved[5*4 +1].r - scratch_interleaved[4*4 +1].i;
+        Fout[12+1].i = scratch_interleaved[5*4 +1].i + scratch_interleaved[4*4 +1].r;
+        Fout[12+2].r = scratch_interleaved[5*4 +2].r - scratch_interleaved[4*4 +2].i;
+        Fout[12+2].i = scratch_interleaved[5*4 +2].i + scratch_interleaved[4*4 +2].r;
+        Fout[12+3].r = scratch_interleaved[5*4 +3].r - scratch_interleaved[4*4 +3].i;
+        Fout[12+3].i = scratch_interleaved[5*4 +3].i + scratch_interleaved[4*4 +3].r;
+    }
+#else
+
+    kiss_fft_cpx scratch1[6];
+    kiss_fft_cpx scratch2[6];
+    kiss_fft_cpx scratch3[6];
+    kiss_fft_cpx scratch4[6];
+
     C_MUL(scratch1[0], Fout[4],      *(tw1+0));
     C_MUL(scratch2[0], Fout[4 + 1],  *(tw1 + fstride));
     C_MUL(scratch3[0], Fout[4 + 2],  *(tw1 + 2*fstride));
@@ -526,50 +610,46 @@ static void kf_bfly4_m4_multiple_scratches(
     C_ADDTO(Fout[3], scratch4[3]);
 
     if (st->inverse) {
-        Fout[4].r = scratch1[5].r - scratch1[4].i;
-        Fout[4].i = scratch1[5].i + scratch1[4].r;
-        Fout[12].r = scratch1[5].r + scratch1[4].i;
-        Fout[12].i = scratch1[5].i - scratch1[4].r;
 
-        Fout[5].r = scratch2[5].r - scratch2[4].i;
-        Fout[5].i = scratch2[5].i + scratch2[4].r;
-        Fout[13].r = scratch2[5].r + scratch2[4].i;
-        Fout[13].i = scratch2[5].i - scratch2[4].r;
+        Fout[4].r   = scratch1[5].r - scratch1[4].i;
+        Fout[4].i   = scratch1[5].i + scratch1[4].r;
+        Fout[4+1].r = scratch2[5].r - scratch2[4].i;
+        Fout[4+1].i = scratch2[5].i + scratch2[4].r;
+        Fout[4+2].r = scratch3[5].r - scratch3[4].i;
+        Fout[4+2].i = scratch3[5].i + scratch3[4].r;
+        Fout[4+3].r = scratch4[5].r - scratch4[4].i;
+        Fout[4+3].i = scratch4[5].i + scratch4[4].r;
 
-        Fout[4 + 2].r = scratch3[5].r - scratch3[4].i;
-        Fout[4 + 2].i = scratch3[5].i + scratch3[4].r;
-        Fout[12 + 2].r = scratch3[5].r + scratch3[4].i;
-        Fout[12 + 2].i = scratch3[5].i - scratch3[4].r;
-
-        Fout[4 + 3].r = scratch4[5].r - scratch4[4].i;
-        Fout[4 + 3].i = scratch4[5].i + scratch4[4].r;
-        Fout[12 + 3].r = scratch4[5].r + scratch4[4].i;
-        Fout[12 + 3].i = scratch4[5].i - scratch4[4].r;
+        Fout[12].r   = scratch1[5].r + scratch1[4].i;
+        Fout[12].i   = scratch1[5].i - scratch1[4].r;
+        Fout[12+1].r = scratch2[5].r + scratch2[4].i;
+        Fout[12+1].i = scratch2[5].i - scratch2[4].r;
+        Fout[12+2].r = scratch3[5].r + scratch3[4].i;
+        Fout[12+2].i = scratch3[5].i - scratch3[4].r;
+        Fout[12+3].r = scratch4[5].r + scratch4[4].i;
+        Fout[12+3].i = scratch4[5].i - scratch4[4].r;
 
     }
     else {
-        Fout[4].r = scratch1[5].r + scratch1[4].i;
-        Fout[4].i = scratch1[5].i - scratch1[4].r;
-        Fout[12].r = scratch1[5].r - scratch1[4].i;
-        Fout[12].i = scratch1[5].i + scratch1[4].r;
+        Fout[4].r   = scratch1[5].r + scratch1[4].i;
+        Fout[4].i   = scratch1[5].i - scratch1[4].r;
+        Fout[4+1].r = scratch2[5].r + scratch2[4].i;
+        Fout[4+1].i = scratch2[5].i - scratch2[4].r;
+        Fout[4+2].r = scratch3[5].r + scratch3[4].i;
+        Fout[4+2].i = scratch3[5].i - scratch3[4].r;
+        Fout[4+3].r = scratch4[5].r + scratch4[4].i;
+        Fout[4+3].i = scratch4[5].i - scratch4[4].r;
 
-
-        Fout[4 + 1].r = scratch2[5].r + scratch2[4].i;
-        Fout[4 + 1].i = scratch2[5].i - scratch2[4].r;
-        Fout[12 + 1].r = scratch2[5].r - scratch2[4].i;
-        Fout[12 + 1].i = scratch2[5].i + scratch2[4].r;
-
-        Fout[4 + 2].r = scratch3[5].r + scratch3[4].i;
-        Fout[4 + 2].i = scratch3[5].i - scratch3[4].r;
-        Fout[12 + 2].r = scratch3[5].r - scratch3[4].i;
-        Fout[12 + 2].i = scratch3[5].i + scratch3[4].r;
-
-        Fout[4 + 3].r = scratch4[5].r + scratch4[4].i;
-        Fout[4 + 3].i = scratch4[5].i - scratch4[4].r;
-        Fout[12 + 3].r = scratch4[5].r - scratch4[4].i;
-        Fout[12 + 3].i = scratch4[5].i + scratch4[4].r;
+        Fout[12].r   = scratch1[5].r - scratch1[4].i;
+        Fout[12].i   = scratch1[5].i + scratch1[4].r;
+        Fout[12+1].r = scratch2[5].r - scratch2[4].i;
+        Fout[12+1].i = scratch2[5].i + scratch2[4].r;
+        Fout[12+2].r = scratch3[5].r - scratch3[4].i;
+        Fout[12+2].i = scratch3[5].i + scratch3[4].r;
+        Fout[12+3].r = scratch4[5].r - scratch4[4].i;
+        Fout[12+3].i = scratch4[5].i + scratch4[4].r;
     }
-
+#endif
 
 }
 
