@@ -1553,9 +1553,8 @@ static void kf_bfly4_m16_multiple_scratches(
 }
 
 
-static void kf_bfly4_m64_multiple_scratches(
+static void kf_bfly4_m64_fstride1_multiple_scratches(
     kiss_fft_cpx* Fout,
-    const size_t fstride,
     const kiss_fft_cfg st
 )
 {
@@ -1577,73 +1576,131 @@ static void kf_bfly4_m64_multiple_scratches(
     tw3 = tw2 = tw1 = st->twiddles;
 
 
+    kiss_fft_cpx* p_tw;
+
 #if 1
     int i;
     for (i = 0; i < 4; i++)
     {
+        p_scratch_interleaved_a = &scratch_interleaved[0 * 64 + i * 16];
+        p_Fout = &Fout[64 + i * 16];
+        p_tw = (tw1 + 0 + i * 16);
 
-        C_MUL(scratch_interleaved[0 * 64     + i * 16], Fout[64     + i * 16],     *(tw1 + 0 * fstride + i * 16 * fstride));
-        C_MUL(scratch_interleaved[0 * 64 + 1 + i * 16], Fout[64 + 1 + i * 16], *(tw1 + 1 * fstride + i * 16 * fstride));
-        C_MUL(scratch_interleaved[0 * 64 + 2 + i * 16], Fout[64 + 2 + i * 16], *(tw1 + 2 * fstride + i * 16 * fstride));
-        C_MUL(scratch_interleaved[0 * 64 + 3 + i * 16], Fout[64 + 3 + i * 16], *(tw1 + 3 * fstride + i * 16 * fstride));
-        C_MUL(scratch_interleaved[0 * 64 + 4 + i * 16], Fout[64 + 4 + i * 16], *(tw1 + 4 * fstride + i * 16 * fstride));
-        C_MUL(scratch_interleaved[0 * 64 + 5 + i * 16], Fout[64 + 5 + i * 16], *(tw1 + 5 * fstride + i * 16 * fstride));
-        C_MUL(scratch_interleaved[0 * 64 + 6 + i * 16], Fout[64 + 6 + i * 16], *(tw1 + 6 * fstride + i * 16 * fstride));
-        C_MUL(scratch_interleaved[0 * 64 + 7 + i * 16], Fout[64 + 7 + i * 16], *(tw1 + 7 * fstride + i * 16 * fstride));
-        C_MUL(scratch_interleaved[0 * 64 + 8 + i * 16], Fout[64 + 8 + i * 16], *(tw1 + 8 * fstride + i * 16 * fstride));
-        C_MUL(scratch_interleaved[0 * 64 + 9 + i * 16], Fout[64 + 9 + i * 16], *(tw1 + 9 * fstride + i * 16 * fstride));
-        C_MUL(scratch_interleaved[0 * 64 + 10 + i * 16], Fout[64 + 10 + i * 16], *(tw1 + 10 * fstride + i * 16 * fstride));
-        C_MUL(scratch_interleaved[0 * 64 + 11 + i * 16], Fout[64 + 11 + i * 16], *(tw1 + 11 * fstride + i * 16 * fstride));
-        C_MUL(scratch_interleaved[0 * 64 + 12 + i * 16], Fout[64 + 12 + i * 16], *(tw1 + 12 * fstride + i * 16 * fstride));
-        C_MUL(scratch_interleaved[0 * 64 + 13 + i * 16], Fout[64 + 13 + i * 16], *(tw1 + 13 * fstride + i * 16 * fstride));
-        C_MUL(scratch_interleaved[0 * 64 + 14 + i * 16], Fout[64 + 14 + i * 16], *(tw1 + 14 * fstride + i * 16 * fstride));
-        C_MUL(scratch_interleaved[0 * 64 + 15 + i * 16], Fout[64 + 15 + i * 16], *(tw1 + 15 * fstride + i * 16 * fstride));
-    }
-    for (i = 0; i < 4; i++)
-    {
+         
+        C_MUL(*p_scratch_interleaved_a, *p_Fout, *p_tw); p_scratch_interleaved_a++; p_Fout++; p_tw++;
+        C_MUL(*p_scratch_interleaved_a, *p_Fout, *p_tw); p_scratch_interleaved_a++; p_Fout++; p_tw++;
+        C_MUL(*p_scratch_interleaved_a, *p_Fout, *p_tw); p_scratch_interleaved_a++; p_Fout++; p_tw++;
+        C_MUL(*p_scratch_interleaved_a, *p_Fout, *p_tw); p_scratch_interleaved_a++; p_Fout++; p_tw++;
+        C_MUL(*p_scratch_interleaved_a, *p_Fout, *p_tw); p_scratch_interleaved_a++; p_Fout++; p_tw++;
+        C_MUL(*p_scratch_interleaved_a, *p_Fout, *p_tw); p_scratch_interleaved_a++; p_Fout++; p_tw++;
+        C_MUL(*p_scratch_interleaved_a, *p_Fout, *p_tw); p_scratch_interleaved_a++; p_Fout++; p_tw++;
+        C_MUL(*p_scratch_interleaved_a, *p_Fout, *p_tw); p_scratch_interleaved_a++; p_Fout++; p_tw++;
+        C_MUL(*p_scratch_interleaved_a, *p_Fout, *p_tw); p_scratch_interleaved_a++; p_Fout++; p_tw++;
+        C_MUL(*p_scratch_interleaved_a, *p_Fout, *p_tw); p_scratch_interleaved_a++; p_Fout++; p_tw++;
+        C_MUL(*p_scratch_interleaved_a, *p_Fout, *p_tw); p_scratch_interleaved_a++; p_Fout++; p_tw++;
+        C_MUL(*p_scratch_interleaved_a, *p_Fout, *p_tw); p_scratch_interleaved_a++; p_Fout++; p_tw++;
+        C_MUL(*p_scratch_interleaved_a, *p_Fout, *p_tw); p_scratch_interleaved_a++; p_Fout++; p_tw++;
+        C_MUL(*p_scratch_interleaved_a, *p_Fout, *p_tw); p_scratch_interleaved_a++; p_Fout++; p_tw++;
+        C_MUL(*p_scratch_interleaved_a, *p_Fout, *p_tw); p_scratch_interleaved_a++; p_Fout++; p_tw++;
+        C_MUL(*p_scratch_interleaved_a, *p_Fout, *p_tw); p_scratch_interleaved_a++; p_Fout++; p_tw++;
 
-
-        C_MUL(scratch_interleaved[1 * 64     + i * 16], Fout[128 + i * 16],     *(tw2 + 0 + i * 16 * 2 * fstride));
-        C_MUL(scratch_interleaved[1 * 64 + 1 + i * 16], Fout[128 + 1 + i * 16], *(tw2 + 1 * 2 * fstride + i * 16 * 2 * fstride));
-        C_MUL(scratch_interleaved[1 * 64 + 2 + i * 16], Fout[128 + 2 + i * 16], *(tw2 + 2 * 2 * fstride + i * 16 * 2 * fstride));
-        C_MUL(scratch_interleaved[1 * 64 + 3 + i * 16], Fout[128 + 3 + i * 16], *(tw2 + 3 * 2 * fstride + i * 16 * 2 * fstride));
-        C_MUL(scratch_interleaved[1 * 64 + 4 + i * 16], Fout[128 + 4 + i * 16], *(tw2 + 4 * 2 * fstride + i * 16 * 2 * fstride));
-        C_MUL(scratch_interleaved[1 * 64 + 5 + i * 16], Fout[128 + 5 + i * 16], *(tw2 + 5 * 2 * fstride + i * 16 * 2 * fstride));
-        C_MUL(scratch_interleaved[1 * 64 + 6 + i * 16], Fout[128 + 6 + i * 16], *(tw2 + 6 * 2 * fstride + i * 16 * 2 * fstride));
-        C_MUL(scratch_interleaved[1 * 64 + 7 + i * 16], Fout[128 + 7 + i * 16], *(tw2 + 7 * 2 * fstride + i * 16 * 2 * fstride));
-        C_MUL(scratch_interleaved[1 * 64 + 8 + i * 16], Fout[128 + 8 + i * 16], *(tw2 + 8 * 2 * fstride + i * 16 * 2 * fstride));
-        C_MUL(scratch_interleaved[1 * 64 + 9 + i * 16], Fout[128 + 9 + i * 16], *(tw2 + 9 * 2 * fstride + i * 16 * 2 * fstride));
-        C_MUL(scratch_interleaved[1 * 64 + 10 + i * 16], Fout[128 + 10 + i * 16], *(tw2 + 10 * 2 * fstride + i * 16 * 2 * fstride));
-        C_MUL(scratch_interleaved[1 * 64 + 11 + i * 16], Fout[128 + 11 + i * 16], *(tw2 + 11 * 2 * fstride + i * 16 * 2 * fstride));
-        C_MUL(scratch_interleaved[1 * 64 + 12 + i * 16], Fout[128 + 12 + i * 16], *(tw2 + 12 * 2 * fstride + i * 16 * 2 * fstride));
-        C_MUL(scratch_interleaved[1 * 64 + 13 + i * 16], Fout[128 + 13 + i * 16], *(tw2 + 13 * 2 * fstride + i * 16 * 2 * fstride));
-        C_MUL(scratch_interleaved[1 * 64 + 14 + i * 16], Fout[128 + 14 + i * 16], *(tw2 + 14 * 2 * fstride + i * 16 * 2 * fstride));
-        C_MUL(scratch_interleaved[1 * 64 + 15 + i * 16], Fout[128 + 15 + i * 16], *(tw2 + 15 * 2 * fstride + i * 16 * 2 * fstride));
-    }
-    for (i = 0; i < 4; i++)
-    {
+        // C_MUL(scratch_interleaved[0 * 64     + i * 16], Fout[64     + i * 16],     *(tw1 + 0  + i * 16));
+        // C_MUL(scratch_interleaved[0 * 64 + 1 + i * 16], Fout[64 + 1 + i * 16], *(tw1 + 1 + i * 16));
+        // C_MUL(scratch_interleaved[0 * 64 + 2 + i * 16], Fout[64 + 2 + i * 16], *(tw1 + 2 + i * 16));
+        // C_MUL(scratch_interleaved[0 * 64 + 3 + i * 16], Fout[64 + 3 + i * 16], *(tw1 + 3 + i * 16));
+        // C_MUL(scratch_interleaved[0 * 64 + 4 + i * 16], Fout[64 + 4 + i * 16], *(tw1 + 4 + i * 16));
+        // C_MUL(scratch_interleaved[0 * 64 + 5 + i * 16], Fout[64 + 5 + i * 16], *(tw1 + 5 + i * 16));
+        // C_MUL(scratch_interleaved[0 * 64 + 6 + i * 16], Fout[64 + 6 + i * 16], *(tw1 + 6 + i * 16));
+        // C_MUL(scratch_interleaved[0 * 64 + 7 + i * 16], Fout[64 + 7 + i * 16], *(tw1 + 7 + i * 16));
+        // C_MUL(scratch_interleaved[0 * 64 + 8 + i * 16], Fout[64 + 8 + i * 16], *(tw1 + 8 + i * 16));
+        // C_MUL(scratch_interleaved[0 * 64 + 9 + i * 16], Fout[64 + 9 + i * 16], *(tw1 + 9 + i * 16));
+        // C_MUL(scratch_interleaved[0 * 64 + 10 + i * 16], Fout[64 + 10 + i * 16], *(tw1 + 10 + i * 16));
+        // C_MUL(scratch_interleaved[0 * 64 + 11 + i * 16], Fout[64 + 11 + i * 16], *(tw1 + 11 + i * 16));
+        // C_MUL(scratch_interleaved[0 * 64 + 12 + i * 16], Fout[64 + 12 + i * 16], *(tw1 + 12 + i * 16));
+        // C_MUL(scratch_interleaved[0 * 64 + 13 + i * 16], Fout[64 + 13 + i * 16], *(tw1 + 13 + i * 16));
+        // C_MUL(scratch_interleaved[0 * 64 + 14 + i * 16], Fout[64 + 14 + i * 16], *(tw1 + 14 + i * 16));
+        // C_MUL(scratch_interleaved[0 * 64 + 15 + i * 16], Fout[64 + 15 + i * 16], *(tw1 + 15 + i * 16));
 
 
+        p_scratch_interleaved_a = &scratch_interleaved[1 * 64 + i * 16];
+        p_Fout = &Fout[128 + i * 16];
 
-        C_MUL(scratch_interleaved[2 * 64 + i * 16],     Fout[192 + i * 16],       *(tw3 + 0 + i * 16 * 3 * fstride));
-        C_MUL(scratch_interleaved[2 * 64 + 1 + i * 16], Fout[192 + 1 + i * 16],   *(tw3 + 1 * 3 * fstride + i * 16 * 3 * fstride));
-        C_MUL(scratch_interleaved[2 * 64 + 2 + i * 16], Fout[192 + 2 + i * 16],   *(tw3 + 2 * 3 * fstride + i * 16 * 3 * fstride));
-        C_MUL(scratch_interleaved[2 * 64 + 3 + i * 16], Fout[192 + 3 + i * 16],   *(tw3 + 3 * 3 * fstride + i * 16 * 3 * fstride));
-        C_MUL(scratch_interleaved[2 * 64 + 4 + i * 16], Fout[192 + 4 + i * 16],   *(tw3 + 4 * 3 * fstride + i * 16 * 3 * fstride));
-        C_MUL(scratch_interleaved[2 * 64 + 5 + i * 16], Fout[192 + 5 + i * 16],   *(tw3 + 5 * 3 * fstride + i * 16 * 3 * fstride));
-        C_MUL(scratch_interleaved[2 * 64 + 6 + i * 16], Fout[192 + 6 + i * 16],   *(tw3 + 6 * 3 * fstride + i * 16 * 3 * fstride));
-        C_MUL(scratch_interleaved[2 * 64 + 7 + i * 16], Fout[192 + 7 + i * 16],   *(tw3 + 7 * 3 * fstride + i * 16 * 3 * fstride));
-        C_MUL(scratch_interleaved[2 * 64 + 8 + i * 16], Fout[192 + 8 + i * 16],   *(tw3 + 8 * 3 * fstride + i * 16 * 3 * fstride));
-        C_MUL(scratch_interleaved[2 * 64 + 9 + i * 16], Fout[192 + 9 + i * 16],   *(tw3 + 9 * 3 * fstride + i * 16 * 3 * fstride));
-        C_MUL(scratch_interleaved[2 * 64 + 10 + i * 16], Fout[192 + 10 + i * 16], *(tw3 + 10 * 3 * fstride + i * 16 * 3 * fstride));
-        C_MUL(scratch_interleaved[2 * 64 + 11 + i * 16], Fout[192 + 11 + i * 16], *(tw3 + 11 * 3 * fstride + i * 16 * 3 * fstride));
-        C_MUL(scratch_interleaved[2 * 64 + 12 + i * 16], Fout[192 + 12 + i * 16], *(tw3 + 12 * 3 * fstride + i * 16 * 3 * fstride));
-        C_MUL(scratch_interleaved[2 * 64 + 13 + i * 16], Fout[192 + 13 + i * 16], *(tw3 + 13 * 3 * fstride + i * 16 * 3 * fstride));
-        C_MUL(scratch_interleaved[2 * 64 + 14 + i * 16], Fout[192 + 14 + i * 16], *(tw3 + 14 * 3 * fstride + i * 16 * 3 * fstride));
-        C_MUL(scratch_interleaved[2 * 64 + 15 + i * 16], Fout[192 + 15 + i * 16], *(tw3 + 15 * 3 * fstride + i * 16 * 3 * fstride));
-    }
-    for (i = 0; i < 4; i++)
-    {
+
+        C_MUL(*p_scratch_interleaved_a, *p_Fout, *(tw2 + 0 + i * 16 * 2)); p_scratch_interleaved_a++; p_Fout++;
+        C_MUL(*p_scratch_interleaved_a, *p_Fout, *(tw2 + 1 * 2 + i * 16 * 2)); p_scratch_interleaved_a++; p_Fout++; 
+        C_MUL(*p_scratch_interleaved_a, *p_Fout, *(tw2 + 2 * 2 + i * 16 * 2)); p_scratch_interleaved_a++; p_Fout++; 
+        C_MUL(*p_scratch_interleaved_a, *p_Fout, *(tw2 + 3 * 2 + i * 16 * 2)); p_scratch_interleaved_a++; p_Fout++; 
+        C_MUL(*p_scratch_interleaved_a, *p_Fout, *(tw2 + 4 * 2 + i * 16 * 2)); p_scratch_interleaved_a++; p_Fout++; 
+        C_MUL(*p_scratch_interleaved_a, *p_Fout, *(tw2 + 5 * 2 + i * 16 * 2)); p_scratch_interleaved_a++; p_Fout++;
+        C_MUL(*p_scratch_interleaved_a, *p_Fout, *(tw2 + 6 * 2 + i * 16 * 2)); p_scratch_interleaved_a++; p_Fout++;
+        C_MUL(*p_scratch_interleaved_a, *p_Fout, *(tw2 + 7 * 2 + i * 16 * 2)); p_scratch_interleaved_a++; p_Fout++; 
+        C_MUL(*p_scratch_interleaved_a, *p_Fout, *(tw2 + 8 * 2 + i * 16 * 2)); p_scratch_interleaved_a++; p_Fout++; 
+        C_MUL(*p_scratch_interleaved_a, *p_Fout, *(tw2 + 9 * 2 + i * 16 * 2)); p_scratch_interleaved_a++; p_Fout++; 
+        C_MUL(*p_scratch_interleaved_a, *p_Fout, *(tw2 + 10 * 2 + i * 16 * 2)); p_scratch_interleaved_a++; p_Fout++; 
+        C_MUL(*p_scratch_interleaved_a, *p_Fout, *(tw2 + 11 * 2 + i * 16 * 2)); p_scratch_interleaved_a++; p_Fout++;
+        C_MUL(*p_scratch_interleaved_a, *p_Fout, *(tw2 + 12 * 2 + i * 16 * 2)); p_scratch_interleaved_a++; p_Fout++; 
+        C_MUL(*p_scratch_interleaved_a, *p_Fout, *(tw2 + 13 * 2 + i * 16 * 2)); p_scratch_interleaved_a++; p_Fout++;
+        C_MUL(*p_scratch_interleaved_a, *p_Fout, *(tw2 + 14 * 2 + i * 16 * 2)); p_scratch_interleaved_a++; p_Fout++; 
+        C_MUL(*p_scratch_interleaved_a, *p_Fout, *(tw2 + 15 * 2 + i * 16 * 2)); p_scratch_interleaved_a++; p_Fout++; 
+
+
+        // C_MUL(scratch_interleaved[1 * 64     + i * 16], Fout[128 + i * 16],     *(tw2 + 0 + i * 16 * 2 ));
+        // C_MUL(scratch_interleaved[1 * 64 + 1 + i * 16], Fout[128 + 1 + i * 16], *(tw2 + 1 * 2  + i * 16 * 2));
+        // C_MUL(scratch_interleaved[1 * 64 + 2 + i * 16], Fout[128 + 2 + i * 16], *(tw2 + 2 * 2  + i * 16 * 2));
+        // C_MUL(scratch_interleaved[1 * 64 + 3 + i * 16], Fout[128 + 3 + i * 16], *(tw2 + 3 * 2  + i * 16 * 2 ));
+        // C_MUL(scratch_interleaved[1 * 64 + 4 + i * 16], Fout[128 + 4 + i * 16], *(tw2 + 4 * 2  + i * 16 * 2 ));
+        // C_MUL(scratch_interleaved[1 * 64 + 5 + i * 16], Fout[128 + 5 + i * 16], *(tw2 + 5 * 2  + i * 16 * 2 ));
+        // C_MUL(scratch_interleaved[1 * 64 + 6 + i * 16], Fout[128 + 6 + i * 16], *(tw2 + 6 * 2  + i * 16 * 2 ));
+        // C_MUL(scratch_interleaved[1 * 64 + 7 + i * 16], Fout[128 + 7 + i * 16], *(tw2 + 7 * 2  + i * 16 * 2 ));
+        // C_MUL(scratch_interleaved[1 * 64 + 8 + i * 16], Fout[128 + 8 + i * 16], *(tw2 + 8 * 2  + i * 16 * 2 ));
+        // C_MUL(scratch_interleaved[1 * 64 + 9 + i * 16], Fout[128 + 9 + i * 16], *(tw2 + 9 * 2  + i * 16 * 2 ));
+        // C_MUL(scratch_interleaved[1 * 64 + 10 + i * 16], Fout[128 + 10 + i * 16], *(tw2 + 10 * 2  + i * 16 * 2 ));
+        // C_MUL(scratch_interleaved[1 * 64 + 11 + i * 16], Fout[128 + 11 + i * 16], *(tw2 + 11 * 2  + i * 16 * 2 ));
+        // C_MUL(scratch_interleaved[1 * 64 + 12 + i * 16], Fout[128 + 12 + i * 16], *(tw2 + 12 * 2  + i * 16 * 2 ));
+        // C_MUL(scratch_interleaved[1 * 64 + 13 + i * 16], Fout[128 + 13 + i * 16], *(tw2 + 13 * 2  + i * 16 * 2 ));
+        // C_MUL(scratch_interleaved[1 * 64 + 14 + i * 16], Fout[128 + 14 + i * 16], *(tw2 + 14 * 2  + i * 16 * 2 ));
+        // C_MUL(scratch_interleaved[1 * 64 + 15 + i * 16], Fout[128 + 15 + i * 16], *(tw2 + 15 * 2  + i * 16 * 2 ));
+
+
+        p_scratch_interleaved_a = &scratch_interleaved[2 * 64 + i * 16];
+        p_Fout = &Fout[192 + i * 16];
+
+
+        C_MUL(*p_scratch_interleaved_a, *p_Fout, *(tw3 + 0 + i * 16 * 3)); p_scratch_interleaved_a++; p_Fout++;
+        C_MUL(*p_scratch_interleaved_a, *p_Fout, *(tw3 + 1 * 3 + i * 16 * 3)); p_scratch_interleaved_a++; p_Fout++;
+        C_MUL(*p_scratch_interleaved_a, *p_Fout, *(tw3 + 2 * 3 + i * 16 * 3)); p_scratch_interleaved_a++; p_Fout++;
+        C_MUL(*p_scratch_interleaved_a, *p_Fout, *(tw3 + 3 * 3 + i * 16 * 3)); p_scratch_interleaved_a++; p_Fout++;
+        C_MUL(*p_scratch_interleaved_a, *p_Fout, *(tw3 + 4 * 3 + i * 16 * 3)); p_scratch_interleaved_a++; p_Fout++;
+        C_MUL(*p_scratch_interleaved_a, *p_Fout, *(tw3 + 5 * 3 + i * 16 * 3)); p_scratch_interleaved_a++; p_Fout++;
+        C_MUL(*p_scratch_interleaved_a, *p_Fout, *(tw3 + 6 * 3 + i * 16 * 3)); p_scratch_interleaved_a++; p_Fout++;
+        C_MUL(*p_scratch_interleaved_a, *p_Fout, *(tw3 + 7 * 3 + i * 16 * 3)); p_scratch_interleaved_a++; p_Fout++;
+        C_MUL(*p_scratch_interleaved_a, *p_Fout, *(tw3 + 8 * 3 + i * 16 * 3)); p_scratch_interleaved_a++; p_Fout++;
+        C_MUL(*p_scratch_interleaved_a, *p_Fout, *(tw3 + 9 * 3 + i * 16 * 3)); p_scratch_interleaved_a++; p_Fout++;
+        C_MUL(*p_scratch_interleaved_a, *p_Fout, *(tw3 + 10 * 3 + i * 16 * 3)); p_scratch_interleaved_a++; p_Fout++;
+        C_MUL(*p_scratch_interleaved_a, *p_Fout, *(tw3 + 11 * 3 + i * 16 * 3)); p_scratch_interleaved_a++; p_Fout++;
+        C_MUL(*p_scratch_interleaved_a, *p_Fout, *(tw3 + 12 * 3 + i * 16 * 3)); p_scratch_interleaved_a++; p_Fout++;
+        C_MUL(*p_scratch_interleaved_a, *p_Fout, *(tw3 + 13 * 3 + i * 16 * 3)); p_scratch_interleaved_a++; p_Fout++;
+        C_MUL(*p_scratch_interleaved_a, *p_Fout, *(tw3 + 14 * 3 + i * 16 * 3)); p_scratch_interleaved_a++; p_Fout++;
+        C_MUL(*p_scratch_interleaved_a, *p_Fout, *(tw3 + 15 * 3 + i * 16 * 3)); p_scratch_interleaved_a++; p_Fout++;
+
+
+        // C_MUL(scratch_interleaved[2 * 64 + i * 16],     Fout[192 + i * 16],       *(tw3 + 0 + i * 16 * 3 ));
+        // C_MUL(scratch_interleaved[2 * 64 + 1 + i * 16], Fout[192 + 1 + i * 16],   *(tw3 + 1 * 3  + i * 16 * 3 ));
+        // C_MUL(scratch_interleaved[2 * 64 + 2 + i * 16], Fout[192 + 2 + i * 16],   *(tw3 + 2 * 3  + i * 16 * 3 ));
+        // C_MUL(scratch_interleaved[2 * 64 + 3 + i * 16], Fout[192 + 3 + i * 16],   *(tw3 + 3 * 3  + i * 16 * 3 ));
+        // C_MUL(scratch_interleaved[2 * 64 + 4 + i * 16], Fout[192 + 4 + i * 16],   *(tw3 + 4 * 3  + i * 16 * 3 ));
+        // C_MUL(scratch_interleaved[2 * 64 + 5 + i * 16], Fout[192 + 5 + i * 16],   *(tw3 + 5 * 3  + i * 16 * 3 ));
+        // C_MUL(scratch_interleaved[2 * 64 + 6 + i * 16], Fout[192 + 6 + i * 16],   *(tw3 + 6 * 3  + i * 16 * 3 ));
+        // C_MUL(scratch_interleaved[2 * 64 + 7 + i * 16], Fout[192 + 7 + i * 16],   *(tw3 + 7 * 3  + i * 16 * 3 ));
+        // C_MUL(scratch_interleaved[2 * 64 + 8 + i * 16], Fout[192 + 8 + i * 16],   *(tw3 + 8 * 3  + i * 16 * 3 ));
+        // C_MUL(scratch_interleaved[2 * 64 + 9 + i * 16], Fout[192 + 9 + i * 16],   *(tw3 + 9 * 3  + i * 16 * 3 ));
+        // C_MUL(scratch_interleaved[2 * 64 + 10 + i * 16], Fout[192 + 10 + i * 16], *(tw3 + 10 * 3  + i * 16 * 3 ));
+        // C_MUL(scratch_interleaved[2 * 64 + 11 + i * 16], Fout[192 + 11 + i * 16], *(tw3 + 11 * 3  + i * 16 * 3 ));
+        // C_MUL(scratch_interleaved[2 * 64 + 12 + i * 16], Fout[192 + 12 + i * 16], *(tw3 + 12 * 3  + i * 16 * 3 ));
+        // C_MUL(scratch_interleaved[2 * 64 + 13 + i * 16], Fout[192 + 13 + i * 16], *(tw3 + 13 * 3  + i * 16 * 3 ));
+        // C_MUL(scratch_interleaved[2 * 64 + 14 + i * 16], Fout[192 + 14 + i * 16], *(tw3 + 14 * 3  + i * 16 * 3));
+        // C_MUL(scratch_interleaved[2 * 64 + 15 + i * 16], Fout[192 + 15 + i * 16], *(tw3 + 15 * 3  + i * 16 * 3 ));
+
         p_scratch_interleaved_a = &scratch_interleaved[1 * 64 + i * 16];
         p_scratch_interleaved_b = &scratch_interleaved[5 * 64 + i * 16];
         p_Fout = &Fout[0 + i * 16];
@@ -1682,14 +1739,13 @@ static void kf_bfly4_m64_multiple_scratches(
         (*p_scratch_interleaved_b).i = (*p_Fout).i - (*p_scratch_interleaved_a).i; p_scratch_interleaved_a++; p_scratch_interleaved_b++; p_Fout++;
         (*p_scratch_interleaved_b).r = (*p_Fout).r - (*p_scratch_interleaved_a).r;
         (*p_scratch_interleaved_b).i = (*p_Fout).i - (*p_scratch_interleaved_a).i; p_scratch_interleaved_a++; p_scratch_interleaved_b++; p_Fout++;
-    }
+
 
         // C_SUB(scratch_interleaved[5*4],   *Fout,    scratch_interleaved[1*4]);
         // C_SUB(scratch_interleaved[5*4 +1], Fout[1], scratch_interleaved[1*4 +1]);
         // C_SUB(scratch_interleaved[5*4 +2], Fout[2], scratch_interleaved[1*4 +2]);
         // C_SUB(scratch_interleaved[5*4 +3], Fout[3], scratch_interleaved[1*4 +3]);
-    for (i = 0; i < 4; i++)
-    {
+
         p_scratch_interleaved_a = &scratch_interleaved[1 * 64 + i * 16];
         p_Fout = &Fout[0 + i * 16];
         (*p_Fout).r += (*p_scratch_interleaved_a).r;
@@ -1727,13 +1783,12 @@ static void kf_bfly4_m64_multiple_scratches(
         (*p_Fout).i += (*p_scratch_interleaved_a).i; p_scratch_interleaved_a++; p_Fout++;
         (*p_Fout).r += (*p_scratch_interleaved_a).r;
         (*p_Fout).i += (*p_scratch_interleaved_a).i; p_scratch_interleaved_a++; p_Fout++;
-    }
+
         // C_ADDTO(Fout[0], scratch_interleaved[1*4]);
         // C_ADDTO(Fout[1], scratch_interleaved[1*4 +1]);
         // C_ADDTO(Fout[2], scratch_interleaved[1*4 +2]);
         // C_ADDTO(Fout[3], scratch_interleaved[1*4 +3]);
-    for (i = 0; i < 4; i++)
-    {
+
         p_scratch_interleaved_a = &scratch_interleaved[3 * 64 + i * 16];
         p_scratch_interleaved_b = &scratch_interleaved[0 * 64 + i * 16];
         p_scratch_interleaved_c = &scratch_interleaved[2 * 64 + i * 16];
@@ -1772,14 +1827,13 @@ static void kf_bfly4_m64_multiple_scratches(
         (*p_scratch_interleaved_a).i = (*p_scratch_interleaved_b).i + (*p_scratch_interleaved_c).i; p_scratch_interleaved_a++; p_scratch_interleaved_b++; p_scratch_interleaved_c++;
         (*p_scratch_interleaved_a).r = (*p_scratch_interleaved_b).r + (*p_scratch_interleaved_c).r;
         (*p_scratch_interleaved_a).i = (*p_scratch_interleaved_b).i + (*p_scratch_interleaved_c).i; p_scratch_interleaved_a++; p_scratch_interleaved_b++; p_scratch_interleaved_c++;
-    }
+ 
         // C_ADD(scratch_interleaved[3*4],    scratch_interleaved[0],   scratch_interleaved[2*4]);
         // C_ADD(scratch_interleaved[3*4 +1], scratch_interleaved[0+1], scratch_interleaved[2*4 +1]);
         // C_ADD(scratch_interleaved[3*4 +2], scratch_interleaved[0+2], scratch_interleaved[2*4 +2]);
         // C_ADD(scratch_interleaved[3*4 +3], scratch_interleaved[0+3], scratch_interleaved[2*4 +3]);
 
-    for (i = 0; i < 4; i++)
-    {
+
         p_scratch_interleaved_a = &scratch_interleaved[4 * 64 + i * 16];
         p_scratch_interleaved_b = &scratch_interleaved[0 * 64 + i * 16];
         p_scratch_interleaved_c = &scratch_interleaved[2 * 64 + i * 16];
@@ -1818,14 +1872,13 @@ static void kf_bfly4_m64_multiple_scratches(
         (*p_scratch_interleaved_a).i = (*p_scratch_interleaved_b).i - (*p_scratch_interleaved_c).i; p_scratch_interleaved_a++; p_scratch_interleaved_b++; p_scratch_interleaved_c++;
         (*p_scratch_interleaved_a).r = (*p_scratch_interleaved_b).r - (*p_scratch_interleaved_c).r;
         (*p_scratch_interleaved_a).i = (*p_scratch_interleaved_b).i - (*p_scratch_interleaved_c).i; p_scratch_interleaved_a++; p_scratch_interleaved_b++; p_scratch_interleaved_c++;
-    }
+
         //C_SUB(scratch_interleaved[4*4],   scratch_interleaved[0],    scratch_interleaved[2*4]);
         //C_SUB(scratch_interleaved[4*4 +1], scratch_interleaved[0+1], scratch_interleaved[2*4 +1]);
         //C_SUB(scratch_interleaved[4*4 +2], scratch_interleaved[0+2], scratch_interleaved[2*4 +2]);
         //C_SUB(scratch_interleaved[4*4 +3], scratch_interleaved[0+3], scratch_interleaved[2*4 +3]);
 
-    for (i = 0; i < 4; i++)
-    {
+
         p_scratch_interleaved_a = &scratch_interleaved[3 * 64 + i * 16];
         p_Fout = &Fout[128 + i * 16];
         p_Fout2 = &Fout[0 + i * 16];
@@ -1864,14 +1917,13 @@ static void kf_bfly4_m64_multiple_scratches(
         (*p_Fout).i = (*p_Fout2).i - (*p_scratch_interleaved_a).i; p_scratch_interleaved_a++; p_Fout++; p_Fout2++;
         (*p_Fout).r = (*p_Fout2).r - (*p_scratch_interleaved_a).r;
         (*p_Fout).i = (*p_Fout2).i - (*p_scratch_interleaved_a).i; p_scratch_interleaved_a++; p_Fout++; p_Fout2++;
-    }
+
         // C_SUB(Fout[8],    *Fout,    scratch_interleaved[3*4]);
         // C_SUB(Fout[8 + 1], Fout[1], scratch_interleaved[3*4 +1]);
         //  C_SUB(Fout[8 + 2], Fout[2], scratch_interleaved[3*4 +2]);
         // C_SUB(Fout[8 + 3], Fout[3], scratch_interleaved[3*4 +3]);
 
-    for (i = 0; i < 4; i++)
-    {
+
         p_scratch_interleaved_a = &scratch_interleaved[3 * 64 + i * 16];
         p_Fout = &Fout[0 + i * 16];
         (*p_Fout).r += (*p_scratch_interleaved_a).r;
@@ -1914,12 +1966,11 @@ static void kf_bfly4_m64_multiple_scratches(
         // C_ADDTO(Fout[1], scratch_interleaved[3*4 +1]);
         // C_ADDTO(Fout[2], scratch_interleaved[3*4 +2]);
         // C_ADDTO(Fout[3], scratch_interleaved[3*4 +3]);
-    }
+
 
         if (st->inverse) {
 
-            for (i = 0; i < 4; i++)
-            {
+
                 p_scratch_interleaved_a = &scratch_interleaved[5 * 64 + i * 16];
                 p_scratch_interleaved_b = &scratch_interleaved[4 * 64 + i * 16];
                 p_Fout = &Fout[64 + i * 16];
@@ -1961,12 +2012,7 @@ static void kf_bfly4_m64_multiple_scratches(
                 (*p_Fout).r = (*p_scratch_interleaved_a).r - (*p_scratch_interleaved_b).i;
                 (*p_Fout).i = (*p_scratch_interleaved_a).i + (*p_scratch_interleaved_b).r; p_scratch_interleaved_a++; p_scratch_interleaved_b++; p_Fout++;
 
-            }
 
-
-
-            for (i = 0; i < 4; i++)
-            {
 
                 p_scratch_interleaved_a = &scratch_interleaved[5 * 64 + i * 16];
                 p_scratch_interleaved_b = &scratch_interleaved[4 * 64 + i * 16];
@@ -2011,108 +2057,104 @@ static void kf_bfly4_m64_multiple_scratches(
                 (*p_Fout).r = (*p_scratch_interleaved_a).r + (*p_scratch_interleaved_b).i;
                 (*p_Fout).i = (*p_scratch_interleaved_a).i - (*p_scratch_interleaved_b).r; p_scratch_interleaved_a++;  p_scratch_interleaved_b++; p_Fout++;
 
-            }
+
 
 
         }
         else {
 
 
-            for (i = 0; i < 4; i++)
-            {
-                p_scratch_interleaved_a = &scratch_interleaved[5 * 64 + i * 16];
-                p_scratch_interleaved_b = &scratch_interleaved[4 * 64 + i * 16];
-                p_Fout = &Fout[64 + i * 16];
 
-                (*p_Fout).r = (*p_scratch_interleaved_a).r + (*p_scratch_interleaved_b).i; // ->
-                (*p_Fout).i = (*p_scratch_interleaved_a).i - (*p_scratch_interleaved_b).r; p_scratch_interleaved_a++; p_scratch_interleaved_b++; p_Fout++;
-                (*p_Fout).r = (*p_scratch_interleaved_a).r + (*p_scratch_interleaved_b).i;
-                (*p_Fout).i = (*p_scratch_interleaved_a).i - (*p_scratch_interleaved_b).r; p_scratch_interleaved_a++; p_scratch_interleaved_b++; p_Fout++;
-                (*p_Fout).r = (*p_scratch_interleaved_a).r + (*p_scratch_interleaved_b).i;
-                (*p_Fout).i = (*p_scratch_interleaved_a).i - (*p_scratch_interleaved_b).r; p_scratch_interleaved_a++; p_scratch_interleaved_b++; p_Fout++;
-                (*p_Fout).r = (*p_scratch_interleaved_a).r + (*p_scratch_interleaved_b).i;
-                (*p_Fout).i = (*p_scratch_interleaved_a).i - (*p_scratch_interleaved_b).r; p_scratch_interleaved_a++; p_scratch_interleaved_b++; p_Fout++;
+            p_scratch_interleaved_a = &scratch_interleaved[5 * 64 + i * 16];
+            p_scratch_interleaved_b = &scratch_interleaved[4 * 64 + i * 16];
+            p_Fout = &Fout[64 + i * 16];
 
-
-                (*p_Fout).r = (*p_scratch_interleaved_a).r + (*p_scratch_interleaved_b).i; // ->
-                (*p_Fout).i = (*p_scratch_interleaved_a).i - (*p_scratch_interleaved_b).r; p_scratch_interleaved_a++; p_scratch_interleaved_b++; p_Fout++;
-                (*p_Fout).r = (*p_scratch_interleaved_a).r + (*p_scratch_interleaved_b).i;
-                (*p_Fout).i = (*p_scratch_interleaved_a).i - (*p_scratch_interleaved_b).r; p_scratch_interleaved_a++; p_scratch_interleaved_b++; p_Fout++;
-                (*p_Fout).r = (*p_scratch_interleaved_a).r + (*p_scratch_interleaved_b).i;
-                (*p_Fout).i = (*p_scratch_interleaved_a).i - (*p_scratch_interleaved_b).r; p_scratch_interleaved_a++; p_scratch_interleaved_b++; p_Fout++;
-                (*p_Fout).r = (*p_scratch_interleaved_a).r + (*p_scratch_interleaved_b).i;
-                (*p_Fout).i = (*p_scratch_interleaved_a).i - (*p_scratch_interleaved_b).r; p_scratch_interleaved_a++; p_scratch_interleaved_b++; p_Fout++;
+            (*p_Fout).r = (*p_scratch_interleaved_a).r + (*p_scratch_interleaved_b).i; // ->
+            (*p_Fout).i = (*p_scratch_interleaved_a).i - (*p_scratch_interleaved_b).r; p_scratch_interleaved_a++; p_scratch_interleaved_b++; p_Fout++;
+            (*p_Fout).r = (*p_scratch_interleaved_a).r + (*p_scratch_interleaved_b).i;
+            (*p_Fout).i = (*p_scratch_interleaved_a).i - (*p_scratch_interleaved_b).r; p_scratch_interleaved_a++; p_scratch_interleaved_b++; p_Fout++;
+            (*p_Fout).r = (*p_scratch_interleaved_a).r + (*p_scratch_interleaved_b).i;
+            (*p_Fout).i = (*p_scratch_interleaved_a).i - (*p_scratch_interleaved_b).r; p_scratch_interleaved_a++; p_scratch_interleaved_b++; p_Fout++;
+            (*p_Fout).r = (*p_scratch_interleaved_a).r + (*p_scratch_interleaved_b).i;
+            (*p_Fout).i = (*p_scratch_interleaved_a).i - (*p_scratch_interleaved_b).r; p_scratch_interleaved_a++; p_scratch_interleaved_b++; p_Fout++;
 
 
-                (*p_Fout).r = (*p_scratch_interleaved_a).r + (*p_scratch_interleaved_b).i; // ->
-                (*p_Fout).i = (*p_scratch_interleaved_a).i - (*p_scratch_interleaved_b).r; p_scratch_interleaved_a++; p_scratch_interleaved_b++; p_Fout++;
-                (*p_Fout).r = (*p_scratch_interleaved_a).r + (*p_scratch_interleaved_b).i;
-                (*p_Fout).i = (*p_scratch_interleaved_a).i - (*p_scratch_interleaved_b).r; p_scratch_interleaved_a++; p_scratch_interleaved_b++; p_Fout++;
-                (*p_Fout).r = (*p_scratch_interleaved_a).r + (*p_scratch_interleaved_b).i;
-                (*p_Fout).i = (*p_scratch_interleaved_a).i - (*p_scratch_interleaved_b).r; p_scratch_interleaved_a++; p_scratch_interleaved_b++; p_Fout++;
-                (*p_Fout).r = (*p_scratch_interleaved_a).r + (*p_scratch_interleaved_b).i;
-                (*p_Fout).i = (*p_scratch_interleaved_a).i - (*p_scratch_interleaved_b).r; p_scratch_interleaved_a++; p_scratch_interleaved_b++; p_Fout++;
-
-                (*p_Fout).r = (*p_scratch_interleaved_a).r + (*p_scratch_interleaved_b).i; // ->
-                (*p_Fout).i = (*p_scratch_interleaved_a).i - (*p_scratch_interleaved_b).r; p_scratch_interleaved_a++; p_scratch_interleaved_b++; p_Fout++;
-                (*p_Fout).r = (*p_scratch_interleaved_a).r + (*p_scratch_interleaved_b).i;
-                (*p_Fout).i = (*p_scratch_interleaved_a).i - (*p_scratch_interleaved_b).r; p_scratch_interleaved_a++; p_scratch_interleaved_b++; p_Fout++;
-                (*p_Fout).r = (*p_scratch_interleaved_a).r + (*p_scratch_interleaved_b).i;
-                (*p_Fout).i = (*p_scratch_interleaved_a).i - (*p_scratch_interleaved_b).r; p_scratch_interleaved_a++; p_scratch_interleaved_b++; p_Fout++;
-                (*p_Fout).r = (*p_scratch_interleaved_a).r + (*p_scratch_interleaved_b).i;
-                (*p_Fout).i = (*p_scratch_interleaved_a).i - (*p_scratch_interleaved_b).r; p_scratch_interleaved_a++; p_scratch_interleaved_b++; p_Fout++;
-
-            }
-            for (i = 0; i < 4; i++)
-            {
+            (*p_Fout).r = (*p_scratch_interleaved_a).r + (*p_scratch_interleaved_b).i; // ->
+            (*p_Fout).i = (*p_scratch_interleaved_a).i - (*p_scratch_interleaved_b).r; p_scratch_interleaved_a++; p_scratch_interleaved_b++; p_Fout++;
+            (*p_Fout).r = (*p_scratch_interleaved_a).r + (*p_scratch_interleaved_b).i;
+            (*p_Fout).i = (*p_scratch_interleaved_a).i - (*p_scratch_interleaved_b).r; p_scratch_interleaved_a++; p_scratch_interleaved_b++; p_Fout++;
+            (*p_Fout).r = (*p_scratch_interleaved_a).r + (*p_scratch_interleaved_b).i;
+            (*p_Fout).i = (*p_scratch_interleaved_a).i - (*p_scratch_interleaved_b).r; p_scratch_interleaved_a++; p_scratch_interleaved_b++; p_Fout++;
+            (*p_Fout).r = (*p_scratch_interleaved_a).r + (*p_scratch_interleaved_b).i;
+            (*p_Fout).i = (*p_scratch_interleaved_a).i - (*p_scratch_interleaved_b).r; p_scratch_interleaved_a++; p_scratch_interleaved_b++; p_Fout++;
 
 
+            (*p_Fout).r = (*p_scratch_interleaved_a).r + (*p_scratch_interleaved_b).i; // ->
+            (*p_Fout).i = (*p_scratch_interleaved_a).i - (*p_scratch_interleaved_b).r; p_scratch_interleaved_a++; p_scratch_interleaved_b++; p_Fout++;
+            (*p_Fout).r = (*p_scratch_interleaved_a).r + (*p_scratch_interleaved_b).i;
+            (*p_Fout).i = (*p_scratch_interleaved_a).i - (*p_scratch_interleaved_b).r; p_scratch_interleaved_a++; p_scratch_interleaved_b++; p_Fout++;
+            (*p_Fout).r = (*p_scratch_interleaved_a).r + (*p_scratch_interleaved_b).i;
+            (*p_Fout).i = (*p_scratch_interleaved_a).i - (*p_scratch_interleaved_b).r; p_scratch_interleaved_a++; p_scratch_interleaved_b++; p_Fout++;
+            (*p_Fout).r = (*p_scratch_interleaved_a).r + (*p_scratch_interleaved_b).i;
+            (*p_Fout).i = (*p_scratch_interleaved_a).i - (*p_scratch_interleaved_b).r; p_scratch_interleaved_a++; p_scratch_interleaved_b++; p_Fout++;
 
-                p_scratch_interleaved_a = &scratch_interleaved[5 * 64 + i * 16];
-                p_scratch_interleaved_b = &scratch_interleaved[4 * 64 + i * 16];
-                p_Fout = &Fout[192 + i * 16];
-
-                (*p_Fout).r = (*p_scratch_interleaved_a).r - (*p_scratch_interleaved_b).i;
-                (*p_Fout).i = (*p_scratch_interleaved_a).i + (*p_scratch_interleaved_b).r; p_scratch_interleaved_a++;  p_scratch_interleaved_b++; p_Fout++;
-                (*p_Fout).r = (*p_scratch_interleaved_a).r - (*p_scratch_interleaved_b).i;
-                (*p_Fout).i = (*p_scratch_interleaved_a).i + (*p_scratch_interleaved_b).r; p_scratch_interleaved_a++;  p_scratch_interleaved_b++; p_Fout++;
-                (*p_Fout).r = (*p_scratch_interleaved_a).r - (*p_scratch_interleaved_b).i;
-                (*p_Fout).i = (*p_scratch_interleaved_a).i + (*p_scratch_interleaved_b).r; p_scratch_interleaved_a++;  p_scratch_interleaved_b++; p_Fout++;
-                (*p_Fout).r = (*p_scratch_interleaved_a).r - (*p_scratch_interleaved_b).i;
-                (*p_Fout).i = (*p_scratch_interleaved_a).i + (*p_scratch_interleaved_b).r; p_scratch_interleaved_a++;  p_scratch_interleaved_b++; p_Fout++;
-
-
-                (*p_Fout).r = (*p_scratch_interleaved_a).r - (*p_scratch_interleaved_b).i;
-                (*p_Fout).i = (*p_scratch_interleaved_a).i + (*p_scratch_interleaved_b).r; p_scratch_interleaved_a++;  p_scratch_interleaved_b++; p_Fout++;
-                (*p_Fout).r = (*p_scratch_interleaved_a).r - (*p_scratch_interleaved_b).i;
-                (*p_Fout).i = (*p_scratch_interleaved_a).i + (*p_scratch_interleaved_b).r; p_scratch_interleaved_a++;  p_scratch_interleaved_b++; p_Fout++;
-                (*p_Fout).r = (*p_scratch_interleaved_a).r - (*p_scratch_interleaved_b).i;
-                (*p_Fout).i = (*p_scratch_interleaved_a).i + (*p_scratch_interleaved_b).r; p_scratch_interleaved_a++;  p_scratch_interleaved_b++; p_Fout++;
-                (*p_Fout).r = (*p_scratch_interleaved_a).r - (*p_scratch_interleaved_b).i;
-                (*p_Fout).i = (*p_scratch_interleaved_a).i + (*p_scratch_interleaved_b).r; p_scratch_interleaved_a++;  p_scratch_interleaved_b++; p_Fout++;
+            (*p_Fout).r = (*p_scratch_interleaved_a).r + (*p_scratch_interleaved_b).i; // ->
+            (*p_Fout).i = (*p_scratch_interleaved_a).i - (*p_scratch_interleaved_b).r; p_scratch_interleaved_a++; p_scratch_interleaved_b++; p_Fout++;
+            (*p_Fout).r = (*p_scratch_interleaved_a).r + (*p_scratch_interleaved_b).i;
+            (*p_Fout).i = (*p_scratch_interleaved_a).i - (*p_scratch_interleaved_b).r; p_scratch_interleaved_a++; p_scratch_interleaved_b++; p_Fout++;
+            (*p_Fout).r = (*p_scratch_interleaved_a).r + (*p_scratch_interleaved_b).i;
+            (*p_Fout).i = (*p_scratch_interleaved_a).i - (*p_scratch_interleaved_b).r; p_scratch_interleaved_a++; p_scratch_interleaved_b++; p_Fout++;
+            (*p_Fout).r = (*p_scratch_interleaved_a).r + (*p_scratch_interleaved_b).i;
+            (*p_Fout).i = (*p_scratch_interleaved_a).i - (*p_scratch_interleaved_b).r; p_scratch_interleaved_a++; p_scratch_interleaved_b++; p_Fout++;
 
 
 
 
-                (*p_Fout).r = (*p_scratch_interleaved_a).r - (*p_scratch_interleaved_b).i;
-                (*p_Fout).i = (*p_scratch_interleaved_a).i + (*p_scratch_interleaved_b).r; p_scratch_interleaved_a++;  p_scratch_interleaved_b++; p_Fout++;
-                (*p_Fout).r = (*p_scratch_interleaved_a).r - (*p_scratch_interleaved_b).i;
-                (*p_Fout).i = (*p_scratch_interleaved_a).i + (*p_scratch_interleaved_b).r; p_scratch_interleaved_a++;  p_scratch_interleaved_b++; p_Fout++;
-                (*p_Fout).r = (*p_scratch_interleaved_a).r - (*p_scratch_interleaved_b).i;
-                (*p_Fout).i = (*p_scratch_interleaved_a).i + (*p_scratch_interleaved_b).r; p_scratch_interleaved_a++;  p_scratch_interleaved_b++; p_Fout++;
-                (*p_Fout).r = (*p_scratch_interleaved_a).r - (*p_scratch_interleaved_b).i;
-                (*p_Fout).i = (*p_scratch_interleaved_a).i + (*p_scratch_interleaved_b).r; p_scratch_interleaved_a++;  p_scratch_interleaved_b++; p_Fout++;
 
-                (*p_Fout).r = (*p_scratch_interleaved_a).r - (*p_scratch_interleaved_b).i;
-                (*p_Fout).i = (*p_scratch_interleaved_a).i + (*p_scratch_interleaved_b).r; p_scratch_interleaved_a++;  p_scratch_interleaved_b++; p_Fout++;
-                (*p_Fout).r = (*p_scratch_interleaved_a).r - (*p_scratch_interleaved_b).i;
-                (*p_Fout).i = (*p_scratch_interleaved_a).i + (*p_scratch_interleaved_b).r; p_scratch_interleaved_a++;  p_scratch_interleaved_b++; p_Fout++;
-                (*p_Fout).r = (*p_scratch_interleaved_a).r - (*p_scratch_interleaved_b).i;
-                (*p_Fout).i = (*p_scratch_interleaved_a).i + (*p_scratch_interleaved_b).r; p_scratch_interleaved_a++;  p_scratch_interleaved_b++; p_Fout++;
-                (*p_Fout).r = (*p_scratch_interleaved_a).r - (*p_scratch_interleaved_b).i;
-                (*p_Fout).i = (*p_scratch_interleaved_a).i + (*p_scratch_interleaved_b).r; p_scratch_interleaved_a++;  p_scratch_interleaved_b++; p_Fout++;
+            p_scratch_interleaved_a = &scratch_interleaved[5 * 64 + i * 16];
+            p_scratch_interleaved_b = &scratch_interleaved[4 * 64 + i * 16];
+            p_Fout = &Fout[192 + i * 16];
 
-            }
+            (*p_Fout).r = (*p_scratch_interleaved_a).r - (*p_scratch_interleaved_b).i;
+            (*p_Fout).i = (*p_scratch_interleaved_a).i + (*p_scratch_interleaved_b).r; p_scratch_interleaved_a++;  p_scratch_interleaved_b++; p_Fout++;
+            (*p_Fout).r = (*p_scratch_interleaved_a).r - (*p_scratch_interleaved_b).i;
+            (*p_Fout).i = (*p_scratch_interleaved_a).i + (*p_scratch_interleaved_b).r; p_scratch_interleaved_a++;  p_scratch_interleaved_b++; p_Fout++;
+            (*p_Fout).r = (*p_scratch_interleaved_a).r - (*p_scratch_interleaved_b).i;
+            (*p_Fout).i = (*p_scratch_interleaved_a).i + (*p_scratch_interleaved_b).r; p_scratch_interleaved_a++;  p_scratch_interleaved_b++; p_Fout++;
+            (*p_Fout).r = (*p_scratch_interleaved_a).r - (*p_scratch_interleaved_b).i;
+            (*p_Fout).i = (*p_scratch_interleaved_a).i + (*p_scratch_interleaved_b).r; p_scratch_interleaved_a++;  p_scratch_interleaved_b++; p_Fout++;
+
+
+            (*p_Fout).r = (*p_scratch_interleaved_a).r - (*p_scratch_interleaved_b).i;
+            (*p_Fout).i = (*p_scratch_interleaved_a).i + (*p_scratch_interleaved_b).r; p_scratch_interleaved_a++;  p_scratch_interleaved_b++; p_Fout++;
+            (*p_Fout).r = (*p_scratch_interleaved_a).r - (*p_scratch_interleaved_b).i;
+            (*p_Fout).i = (*p_scratch_interleaved_a).i + (*p_scratch_interleaved_b).r; p_scratch_interleaved_a++;  p_scratch_interleaved_b++; p_Fout++;
+            (*p_Fout).r = (*p_scratch_interleaved_a).r - (*p_scratch_interleaved_b).i;
+            (*p_Fout).i = (*p_scratch_interleaved_a).i + (*p_scratch_interleaved_b).r; p_scratch_interleaved_a++;  p_scratch_interleaved_b++; p_Fout++;
+            (*p_Fout).r = (*p_scratch_interleaved_a).r - (*p_scratch_interleaved_b).i;
+            (*p_Fout).i = (*p_scratch_interleaved_a).i + (*p_scratch_interleaved_b).r; p_scratch_interleaved_a++;  p_scratch_interleaved_b++; p_Fout++;
+
+
+
+
+            (*p_Fout).r = (*p_scratch_interleaved_a).r - (*p_scratch_interleaved_b).i;
+            (*p_Fout).i = (*p_scratch_interleaved_a).i + (*p_scratch_interleaved_b).r; p_scratch_interleaved_a++;  p_scratch_interleaved_b++; p_Fout++;
+            (*p_Fout).r = (*p_scratch_interleaved_a).r - (*p_scratch_interleaved_b).i;
+            (*p_Fout).i = (*p_scratch_interleaved_a).i + (*p_scratch_interleaved_b).r; p_scratch_interleaved_a++;  p_scratch_interleaved_b++; p_Fout++;
+            (*p_Fout).r = (*p_scratch_interleaved_a).r - (*p_scratch_interleaved_b).i;
+            (*p_Fout).i = (*p_scratch_interleaved_a).i + (*p_scratch_interleaved_b).r; p_scratch_interleaved_a++;  p_scratch_interleaved_b++; p_Fout++;
+            (*p_Fout).r = (*p_scratch_interleaved_a).r - (*p_scratch_interleaved_b).i;
+            (*p_Fout).i = (*p_scratch_interleaved_a).i + (*p_scratch_interleaved_b).r; p_scratch_interleaved_a++;  p_scratch_interleaved_b++; p_Fout++;
+
+            (*p_Fout).r = (*p_scratch_interleaved_a).r - (*p_scratch_interleaved_b).i;
+            (*p_Fout).i = (*p_scratch_interleaved_a).i + (*p_scratch_interleaved_b).r; p_scratch_interleaved_a++;  p_scratch_interleaved_b++; p_Fout++;
+            (*p_Fout).r = (*p_scratch_interleaved_a).r - (*p_scratch_interleaved_b).i;
+            (*p_Fout).i = (*p_scratch_interleaved_a).i + (*p_scratch_interleaved_b).r; p_scratch_interleaved_a++;  p_scratch_interleaved_b++; p_Fout++;
+            (*p_Fout).r = (*p_scratch_interleaved_a).r - (*p_scratch_interleaved_b).i;
+            (*p_Fout).i = (*p_scratch_interleaved_a).i + (*p_scratch_interleaved_b).r; p_scratch_interleaved_a++;  p_scratch_interleaved_b++; p_Fout++;
+            (*p_Fout).r = (*p_scratch_interleaved_a).r - (*p_scratch_interleaved_b).i;
+            (*p_Fout).i = (*p_scratch_interleaved_a).i + (*p_scratch_interleaved_b).r; p_scratch_interleaved_a++;  p_scratch_interleaved_b++; p_Fout++;
+
 
 
         }
@@ -2209,6 +2251,7 @@ static void kf_bfly4_m64_multiple_scratches(
         Fout[12 + 3].i = scratch4[5].i + scratch4[4].r;
     }
 #endif
+    }
 
 }
 
@@ -2456,7 +2499,7 @@ void kf_work(
                 }
                 else if ((m == 64) && (fstride == 1))
                 {
-                    kf_bfly4_m64_multiple_scratches(Fout, fstride, st); // kf_bfly4_m64(Fout, fstride, st, m);  // kf_bfly4_m64_multiple_scratches(Fout, fstride, st); // kf_bfly4_m64(Fout, fstride, st, m);
+                    kf_bfly4_m64_fstride1_multiple_scratches(Fout, st); // kf_bfly4_m64(Fout, fstride, st, m);  // kf_bfly4_m64_multiple_scratches(Fout, fstride, st); // kf_bfly4_m64(Fout, fstride, st, m);
                 }
                 else
                 {
