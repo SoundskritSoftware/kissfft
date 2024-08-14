@@ -2427,34 +2427,42 @@ void kf_work(
         case 2: kf_bfly2(Fout,fstride,st,m); break;
         case 3: kf_bfly3(Fout,fstride,st,m); break;
         case 4: 
-            if ((m == 4) && (fstride==16))
-            {
-                
-                
-                kf_bfly4_m4_multiple_scratches(Fout, fstride, st);
+#if 0
 
-                // kiss_fft_cpx* fast_Fout = (kiss_fft_cpx*)malloc(16 * sizeof(kiss_fft_cpx));
-                // f_map_Fout_to_fast_Fout(Fout, fast_Fout);
-                // kf_bfly4_m4_remapped(fast_Fout, fstride, st);
-                // f_map_fast_Fout_to_Fout(fast_Fout, Fout);
-               
-            }
-            else if (m == 1)
-            {
-                kf_bfly4_m1(Fout, st);
-            }
-            else if ((m == 16) && (fstride == 4))
-            {
-                kf_bfly4_m16_multiple_scratches(Fout, fstride, st);
-            }
-            else if ((m == 64) && (fstride == 1))
-            {
-                kf_bfly4_m64_multiple_scratches(Fout, fstride, st); // kf_bfly4_m64(Fout, fstride, st, m);  // kf_bfly4_m64_multiple_scratches(Fout, fstride, st); // kf_bfly4_m64(Fout, fstride, st, m);
-            }
-            else
-            {
                 kf_bfly4(Fout, fstride, st, m);
-            }
+
+#else
+
+            
+                if ((m == 4) && (fstride==16))
+                {
+                
+                
+                    kf_bfly4_m4_multiple_scratches(Fout, fstride, st);
+
+                    // kiss_fft_cpx* fast_Fout = (kiss_fft_cpx*)malloc(16 * sizeof(kiss_fft_cpx));
+                    // f_map_Fout_to_fast_Fout(Fout, fast_Fout);
+                    // kf_bfly4_m4_remapped(fast_Fout, fstride, st);
+                    // f_map_fast_Fout_to_Fout(fast_Fout, Fout);
+               
+                }
+                else if (m == 1)
+                {
+                    kf_bfly4_m1(Fout, st);
+                }
+                else if ((m == 16) && (fstride == 4))
+                {
+                    kf_bfly4_m16_multiple_scratches(Fout, fstride, st);
+                }
+                else if ((m == 64) && (fstride == 1))
+                {
+                    kf_bfly4_m64_multiple_scratches(Fout, fstride, st); // kf_bfly4_m64(Fout, fstride, st, m);  // kf_bfly4_m64_multiple_scratches(Fout, fstride, st); // kf_bfly4_m64(Fout, fstride, st, m);
+                }
+                else
+                {
+                    kf_bfly4(Fout, fstride, st, m);
+                }
+#endif
             break;
         case 5: kf_bfly5(Fout,fstride,st,m); break;
         default: kf_bfly_generic(Fout,fstride,st,m,p); break;
