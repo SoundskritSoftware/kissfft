@@ -1786,7 +1786,7 @@ void kf_work(
             }
             else if ((m == 16) && (fstride == 4))
             {
-                kf_bfly4_m16_multiple_scratches(Fout, fstride, st, m);
+                kf_bfly4_m16_multiple_scratches(Fout, fstride, st);
             }
             else
             {
