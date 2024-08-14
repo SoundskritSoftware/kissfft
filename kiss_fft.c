@@ -869,7 +869,7 @@ void kf_work(
         case 2: kf_bfly2(Fout,fstride,st,m); break;
         case 3: kf_bfly3(Fout,fstride,st,m); break;
         case 4: 
-            if (m == 4) 
+            if ((m == 4) && (fstride==16))
             {
                 
                 
